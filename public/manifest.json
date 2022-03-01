@@ -1,22 +1,24 @@
 {
   "manifest_version": 3,
 
-  "name": "Chrome Extension TypeScript Starter",
-  "description": "Chrome Extension, TypeScript, Visual Studio Code",
+  "name": "__MSG_appName__",
+  "description": "__MSG_appDesc__",
+  "default_locale": "en",
   "version": "1.0",
-
-  "options_ui": {
-    "page": "options.html"
-  },
+  "oauth2":{
+		"client_id":"426988588387-45t865hnqu44u4p25lba8ihpgjgm2jn2.apps.googleusercontent.com",
+		"scopes":["https://www.googleapis.com/auth/drive.file"]
+    },
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAq0AUTc5Wn6/leppHTs2vk79bxQ4rx/CUNv5YI79rp0OL9Qs9jzSPhLnPo4f9uCLuctA+lmTUplQikwNJ0+/zzJMvakM9LbVDiyW/+S5lLLYIYkoSYllifbVdK0/g14tUTDgNdcyjticgkcPo31U+q/ehyb5oQ8Fthim26GNA1gzrssGrL96e++Fim1TWh1Ff24BG5UzkfULV6B83bN6eIU7uEfUv3RGSbtYwQjbT005XCCIK5WHcql/NN95clhgixPJbnxHt+dFlS8M6A/HRBEdi1/JbFzY4ED0EgHpTPYk5tiTkZSc4Z+0ulS7y4A4MCbksbFdFrZdFnTDZRRlEZwIDAQAB",
 
   "action": {
-    "default_icon": "icon.png",
+    "default_icon": "images/16.png",
     "default_popup": "popup.html"
   },
 
   "content_scripts": [
       {
-          "matches": ["<all_urls>"],
+          "matches": ["https://meet.google.com/*"],
           "js": ["js/vendor.js", "js/content_script.js"]
       }
   ],
@@ -25,8 +27,16 @@
     "service_worker": "js/background.js"
   },
 
+  "icons": {
+    "16": "images/16.png",
+    "32": "images/32.png",
+    "48": "images/48.png",
+    "128": "images/128.png"
+  },
+
   "permissions": [
-    "storage"
+    "storage",
+    "identity"
   ],
 
   "host_permissions": [

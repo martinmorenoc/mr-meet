@@ -1,57 +1,66 @@
-import React, { useEffect, useState } from "react";
-import ReactDOM from "react-dom";
+import React, { useEffect, useState } from 'react';
+import ReactDOM from 'react-dom';
+import createFolder from './services/createFolder';
+import getFileByName from './services/getFileByName';
+import getFolderFileNames from './services/getFolderFileNames';
 
-const Popup = () => {
-  const [count, setCount] = useState(0);
-  const [currentURL, setCurrentURL] = useState<string>();
-
+function Popup() {
+  const [isInMeeting, setIsInMeeting] = useState<boolean>(false);
   useEffect(() => {
-    chrome.action.setBadgeText({ text: count.toString() });
-  }, [count]);
-
-  useEffect(() => {
-    chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-      setCurrentURL(tabs[0].url);
-    });
-  }, []);
-
-  const changeBackground = () => {
-    chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-      const tab = tabs[0];
-      if (tab.id) {
-        chrome.tabs.sendMessage(
-          tab.id,
-          {
-            color: "#555555",
-          },
-          (msg) => {
-            console.log("result message:", msg);
-          }
-        );
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      if (tabs[0].url?.includes('meet.google.com/')) {
+        setIsInMeeting(true);
       }
     });
+  }, []);
+  const takeAttendance = () => {
+    chrome.identity.getAuthToken({ interactive: true }, async (authToken: string) => {
+      const gettedFolder = await getFileByName(chrome.i18n.getMessage('mrMeetFolderName'), 'folder', authToken);
+      const mrMeetFolder = gettedFolder || await createFolder(chrome.i18n.getMessage('mrMeetFolderName'), authToken);
+      chrome.storage.sync.set({ mrMeetFolderId: mrMeetFolder.id });
+      const classNames = await getFolderFileNames(mrMeetFolder.id, 'folder', authToken);
+      chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+        const tab = tabs[0];
+        if (tab.id) {
+          chrome.tabs.sendMessage(
+            tab.id,
+            {
+              message: 'showAttendanceModal',
+              classNames,
+              authToken,
+            },
+          );
+        }
+      });
+    });
   };
-
+  let description;
+  if (!isInMeeting) {
+    description = chrome.i18n.getMessage('disabledDescriptionPopup');
+  }
   return (
-    <>
-      <ul style={{ minWidth: "700px" }}>
-        <li>Current URL: {currentURL}</li>
-        <li>Current Time: {new Date().toLocaleTimeString()}</li>
-      </ul>
+    // eslint-disable-next-line react/jsx-filename-extension
+    <div className="container">
+      <div>
+        <img src="../images/128.png" width="100" height="100" alt="logo" />
+      </div>
+      <h2>{chrome.i18n.getMessage('titlePopup')}</h2>
+      <p>{description}</p>
       <button
-        onClick={() => setCount(count + 1)}
-        style={{ marginRight: "5px" }}
+        disabled={!isInMeeting}
+        className="button-25"
+        type="button"
+        onClick={takeAttendance}
       >
-        count up
+        {chrome.i18n.getMessage('attendanceButton')}
       </button>
-      <button onClick={changeBackground}>change background</button>
-    </>
+    </div>
   );
-};
+}
 
 ReactDOM.render(
   <React.StrictMode>
     <Popup />
   </React.StrictMode>,
-  document.getElementById("root")
+  document.getElementById('root'),
 );

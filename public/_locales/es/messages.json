@@ -1,0 +1,128 @@
+{
+    "appName": {
+      "message": "Mr Meet - Toma Asistencia en Google Meet"
+    },
+    "appDesc": {
+      "message": "Agrega nuevas funcionalidades a Google Meet orientadas a las clases. Tomar asistencia, enviar preguntas y selección aleatoria de un alumno."
+    },
+    "mrMeetFolderName": {
+        "message": "Mr Meet"
+    },
+    "attendance": {
+        "message": "Asistencia"
+    },
+    "attendanceButton": {
+        "message": "Tomar Asistencia"
+    },
+    "attendanceTaken": {
+        "message": "Asistencia tomada con éxito"
+    },
+    "openMessage": {
+        "message": "¿Quieres abrirla?"
+    },
+    "open": {
+        "message": "Abrir"
+    },
+    "randomSelectButton": {
+        "message": "Selección Aleatoria"
+    },
+    "somethingWentWrong": {
+        "message": "Algo salió mal"
+    },
+    "noParticipants": {
+        "message": "No hay participantes en la reunión."
+    },
+    "openParticipantsTab": {
+        "message": "Asegurate de tener abierta la pestaña de participantes"
+    },
+    "randomSelectModalTitle": {
+        "message": "¿Estás seguro?"
+    },
+    "randomSelectModalText": {
+        "message": "Se seleccionará un participante al azar y se le activará su micrófono"
+    },
+    "randomSelectModalConfirmButton": {
+        "message": "Seleccionar"
+    },
+    "selectACourse": {
+        "message": "Selecciona una clase"
+    },
+    "attendanceModalPlaceHolder": {
+        "message": "Selecciona una clase"
+    },
+    "attendanceModalConfirmButton": {
+        "message": "Tomar Asistencia"
+    },
+    "modalCancelButton": {
+        "message": "Cancelar"
+    },
+    "attendanceModalNewCourseButton": {
+        "message": "Nueva Clase"
+    },
+    "takingAttendanceModalTitle": {
+        "message": "Tomando asistencia..."
+    },
+    "newCourseModalTitle": {
+        "message": "Crear una lista para una clase"
+    },
+    "newCourseModalPlaceHolder": {
+        "message": "Escribe el nombre de la clase aquí..."
+    },
+    "newCourseModalAlreadyExists": {
+        "message": "Esta clase ya existe"
+    },
+    "creatingFilesAndTakingAttendance": {
+        "message": "Creando archivos necesarios y tomando asistencia..."
+    },
+    "noCourseSelected": {
+        "message": "Tienes que seleccionar una clase"
+    },
+    "hasBeenSelected": {
+        "message": " ha sido seleccionado"
+    },
+    "participantSelectedModalText": {
+        "message": "Su micrófono se ha activado"
+    },
+    "you_have_been_selected": {
+        "message": "Has sido seleccionado"
+    },
+    "mic_activated": {
+        "message": "Tu micrófono ha sido activado"
+    },
+    "teacherSelected": {
+        "message": "El profesor ha seleccionado a un estudiante al azar."
+    },
+    "studentUnmuted":{
+        "message": "Un estudiante ha sido desmuteado."
+    },
+    "noCoursesAvailable":{
+        "message": "No tienes clases disponibles"
+    },
+    "noCoursesModalText":{
+        "message": "Crea uno tomando asistencia por primera vez"
+    },
+    "disabledDescriptionPopup": {
+        "message": "Las funciones se habilitan cuando estás en una reunión"
+    },
+    "titlePopup": {
+        "message": "Funciones Mr Meet"
+    },
+    "likeExtensionText": {
+        "message": "¿Te gusta la extensión?"
+    },
+    "rateUsText": {
+        "message": "Escribe una reseña!"
+    },
+    "answerFormText": {
+        "message": "Responde esta pregunta"
+    },
+    "formLink": {
+        "message": "https://forms.gle/6NFQ3rYXAM8LiNkN8"
+    },
+    "totalAttendance": {
+        "message": "Asistencia Total"
+    },
+    "attendancePercentage": {
+        "message": "Porcentaje Asistencia"
+    }
+}

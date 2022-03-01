@@ -1,0 +1,122 @@
+{
+    "appName": {
+      "message": "Mr Meet - Take Attendance in Google Meet"
+    },
+    "appDesc": {
+      "message": "Adds new class-oriented functionality to Google Meet. Take attendance and select a random student."
+    },
+    "mrMeetFolderName": {
+        "message": "Mr Meet"
+    },
+    "attendance": {
+        "message": "Attendance"
+    },
+    "attendanceButton": {
+        "message": "Take Attendance"
+    },
+    "attendanceTaken": {
+        "message": "Attendance taken successfully"
+    },
+    "openMessage": {
+        "message": "Do you want to open it?"
+    },
+    "open": {
+        "message": "Open"
+    },
+    "randomSelectButton": {
+        "message": "Random Select"
+    },
+    "somethingWentWrong": {
+        "message": "Something went wrong"
+    },
+    "noParticipants": {
+        "message": "There are not participants in the meet"
+    },
+    "openParticipantsTab": {
+        "message": "Make sure you have the participants tab open"
+    },
+    "randomSelectModalTitle": {
+        "message": "Are you sure?"
+    },
+    "randomSelectModalText": {
+        "message": "A student will be selected randomly"
+    },
+    "randomSelectModalConfirmButton": {
+        "message": "Select Random"
+    },
+    "selectACourse": {
+        "message": "Select a class"
+    },
+    "attendanceModalPlaceHolder": {
+        "message": "Select a class"
+    },
+    "attendanceModalConfirmButton": {
+        "message": "Take Attendance"
+    },
+    "modalCancelButton": {
+        "message": "Cancel"
+    },
+    "attendanceModalNewCourseButton": {
+        "message": "New Class"
+    },
+    "takingAttendanceModalTitle": {
+        "message": "Taking attendance..."
+    },
+    "newCourseModalTitle": {
+        "message": "Create a new class list"
+    },
+    "newCourseModalPlaceHolder": {
+        "message": "Type your class name here..."
+    },
+    "newCourseModalAlreadyExists": {
+        "message": "This class already exists"
+    },
+    "creatingFilesAndTakingAttendance": {
+        "message": "Creating necessary files and taking attendance..."
+    },
+    "noCourseSelected": {
+        "message": "You need to select a class"
+    },
+    "hasBeenSelected": {
+        "message": " has been selected"
+    },
+    "participantSelectedModalText": {
+        "message": "His microphone has been activated"
+    },
+    "teacherSelected": {
+        "message": "The teacher has selected a random student"
+    },
+    "studentUnmuted":{
+        "message": "A random student has been unmuted"
+    },
+    "noCoursesAvailable":{
+        "message": "You don't have classes available"
+    },
+    "noCoursesModalText":{
+        "message": "Create one by passing attendance once!"
+    },
+    "titlePopup": {
+        "message": "Mr Meet Features"
+    },
+    "disabledDescriptionPopup": {
+        "message": "Features are enabled when you are in a meeting"
+    },
+    "likeExtensionText": {
+        "message": "Do you like the extension?"
+    },
+    "rateUsText": {
+        "message": "Please rate us!"
+    },
+    "answerFormText": {
+        "message": "Answer this short question"
+    },
+    "formLink": {
+        "message": "https://forms.gle/4b1Vi2CvHqR84t397"
+    },
+    "totalAttendance": {
+        "message": "Total Attendance"
+    },
+    "attendancePercentage": {
+        "message": "Attendance Percentage"
+    }
+}
