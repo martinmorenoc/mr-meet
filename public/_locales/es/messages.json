@@ -80,9 +80,6 @@
     "hasBeenSelected": {
         "message": " ha sido seleccionado"
     },
-    "participantSelectedModalText": {
-        "message": "Su micrófono se ha activado"
-    },
     "you_have_been_selected": {
         "message": "Has sido seleccionado"
     },

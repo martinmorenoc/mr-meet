@@ -13,6 +13,7 @@ function Popup() {
       }
     });
   }, []);
+
   const takeAttendance = () => {
     chrome.identity.getAuthToken({ interactive: true }, async (authToken: string) => {
       const gettedFolder = await getFileByName(chrome.i18n.getMessage('mrMeetFolderName'), 'folder', authToken);
@@ -34,6 +35,21 @@ function Popup() {
       });
     });
   };
+
+  const randomSelect = () => {
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      const tab = tabs[0];
+      if (tab.id) {
+        chrome.tabs.sendMessage(
+          tab.id,
+          {
+            message: 'showRandomSelectModal',
+          },
+        );
+      }
+    });
+  };
+
   let description;
   if (!isInMeeting) {
     description = chrome.i18n.getMessage('disabledDescriptionPopup');
@@ -53,6 +69,14 @@ function Popup() {
         onClick={takeAttendance}
       >
         {chrome.i18n.getMessage('attendanceButton')}
+      </button>
+      <button
+        disabled={!isInMeeting}
+        className="button-25"
+        type="button"
+        onClick={randomSelect}
+      >
+        {chrome.i18n.getMessage('randomSelectButton')}
       </button>
     </div>
   );

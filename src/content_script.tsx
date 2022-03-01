@@ -1,5 +1,27 @@
 import Swal from 'sweetalert2';
 
+const checkParticipants = () => {
+  const participantsCount = document.querySelectorAll('[role=listitem]').length;
+  if (participantsCount === 0) {
+    Swal.fire({
+      icon: 'info',
+      title: chrome.i18n.getMessage('somethingWentWrong'),
+      text: chrome.i18n.getMessage('openParticipantsTab'),
+      showConfirmButton: true,
+    });
+    return false;
+  } if (participantsCount === 1) {
+    Swal.fire({
+      icon: 'info',
+      title: chrome.i18n.getMessage('somethingWentWrong'),
+      text: chrome.i18n.getMessage('noParticipants'),
+      showConfirmButton: true,
+    });
+    return false;
+  }
+  return true;
+};
+
 const collectParticipants = () => {
   const participantIds: string[] = [];
   const participantNames: string[] = [];
@@ -32,25 +54,20 @@ const takeAttendance = (className: string, token: string, classFolderId?: string
   });
 };
 
+const randomSelect = () => {
+  const participantNames = collectParticipants();
+  const randomName = participantNames[Math.floor(Math.random() * participantNames.length)];
+  Swal.fire({
+    title: randomName + chrome.i18n.getMessage('hasBeenSelected'),
+    icon: 'success',
+  });
+};
+
 chrome.runtime.onMessage.addListener(async (msg) => {
   const { message } = msg;
   if (message === 'showAttendanceModal') {
-    const participantsCount = document.querySelectorAll('[role=listitem]').length;
-    if (participantsCount === 0) {
-      Swal.fire({
-        icon: 'info',
-        title: chrome.i18n.getMessage('somethingWentWrong'),
-        text: chrome.i18n.getMessage('openParticipantsTab'),
-        showConfirmButton: true,
-      });
-    } else if (participantsCount === 1) {
-      Swal.fire({
-        icon: 'info',
-        title: chrome.i18n.getMessage('somethingWentWrong'),
-        text: chrome.i18n.getMessage('noParticipants'),
-        showConfirmButton: true,
-      });
-    } else {
+    const isTabOpenAndHasParticipants = checkParticipants();
+    if (isTabOpenAndHasParticipants) {
       await Swal.fire({
         title: chrome.i18n.getMessage('selectACourse'),
         input: 'select',
@@ -127,6 +144,21 @@ chrome.runtime.onMessage.addListener(async (msg) => {
         }
       });
     }
+  } else if (message === 'showRandomSelectModal') {
+    const isTabOpenAndHasParticipants = checkParticipants();
+    if (isTabOpenAndHasParticipants) {
+      Swal.fire({
+        title: chrome.i18n.getMessage('randomSelectModalTitle'),
+        text: chrome.i18n.getMessage('randomSelectModalText'),
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: chrome.i18n.getMessage('randomSelectModalConfirmButton'),
+      }).then((result) => {
+        if (result.isConfirmed) {
+          randomSelect();
+        }
+      });
+    }
   } else if (message === 'success') {
     Swal.fire({
       title: chrome.i18n.getMessage('attendanceTaken'),
@@ -146,8 +178,7 @@ chrome.runtime.onMessage.addListener(async (msg) => {
       icon: 'error',
       title: chrome.i18n.getMessage('somethingWentWrong'),
       text: msg.text,
-      showConfirmButton: false,
-      timer: 3000,
+      showConfirmButton: true,
     });
   }
 });

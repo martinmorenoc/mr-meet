@@ -80,9 +80,6 @@
     "hasBeenSelected": {
         "message": " has been selected"
     },
-    "participantSelectedModalText": {
-        "message": "His microphone has been activated"
-    },
     "teacherSelected": {
         "message": "The teacher has selected a random student"
     },
