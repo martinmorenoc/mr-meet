@@ -1,4 +1,5 @@
 # <img src="public/images/128.png" width="48"> Mr Meet
+![build-badge](https://img.shields.io/badge/build-passing-green.svg)
 ## Chrome extension to add new class-oriented functionalities to Google Meet
 
 - **Take attendance** functionality integrated with Google Drive and Spreadsheets
@@ -6,7 +7,7 @@
 
 ## Screenshots
 ### Popup
-<img width="600" alt="popup" src="https://user-images.githubusercontent.com/43624675/156106369-90447a67-b483-41bd-b2b4-b85dfd7002ee.png">
+<img width="500" alt="popup" src="https://user-images.githubusercontent.com/43624675/156106369-90447a67-b483-41bd-b2b4-b85dfd7002ee.png">
 
 ### Attendance
 <img width="600" alt="attendanceModal" src="https://user-images.githubusercontent.com/43624675/156102208-6c65cfa3-027e-43ec-81a3-70cf90dab3e7.png">
