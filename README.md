@@ -25,7 +25,8 @@
 ## Development
 
 1. Clone this repo
-2. Go to chrome extensions chrome://extensions
-3. Enable developer mode
-4. Click on load unpacked extension and select dist folder of this cloned repo
-5. Run `npm run watch`
+2. Run `npm install`
+3. Run `npm run watch`
+4. Go to chrome extensions chrome://extensions
+5. Enable developer mode
+6. Click on load unpacked extension and select dist folder of this cloned repo
