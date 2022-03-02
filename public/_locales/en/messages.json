@@ -35,15 +35,6 @@
     "openParticipantsTab": {
         "message": "Make sure you have the participants tab open"
     },
-    "randomSelectModalTitle": {
-        "message": "Are you sure?"
-    },
-    "randomSelectModalText": {
-        "message": "A student will be selected randomly"
-    },
-    "randomSelectModalConfirmButton": {
-        "message": "Select Random"
-    },
     "selectACourse": {
         "message": "Select a class"
     },
@@ -63,7 +54,7 @@
         "message": "Taking attendance..."
     },
     "newCourseModalTitle": {
-        "message": "Create a new class list"
+        "message": "Create a new class"
     },
     "newCourseModalPlaceHolder": {
         "message": "Type your class name here..."
@@ -79,12 +70,6 @@
     },
     "hasBeenSelected": {
         "message": " has been selected"
-    },
-    "teacherSelected": {
-        "message": "The teacher has selected a random student"
-    },
-    "studentUnmuted":{
-        "message": "A random student has been unmuted"
     },
     "noCoursesAvailable":{
         "message": "You don't have classes available"
@@ -103,12 +88,6 @@
     },
     "rateUsText": {
         "message": "Please rate us!"
-    },
-    "answerFormText": {
-        "message": "Answer this short question"
-    },
-    "formLink": {
-        "message": "https://forms.gle/4b1Vi2CvHqR84t397"
     },
     "totalAttendance": {
         "message": "Total Attendance"

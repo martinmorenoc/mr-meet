@@ -147,17 +147,7 @@ chrome.runtime.onMessage.addListener(async (msg) => {
   } else if (message === 'showRandomSelectModal') {
     const isTabOpenAndHasParticipants = checkParticipants();
     if (isTabOpenAndHasParticipants) {
-      Swal.fire({
-        title: chrome.i18n.getMessage('randomSelectModalTitle'),
-        text: chrome.i18n.getMessage('randomSelectModalText'),
-        icon: 'question',
-        showCancelButton: true,
-        confirmButtonText: chrome.i18n.getMessage('randomSelectModalConfirmButton'),
-      }).then((result) => {
-        if (result.isConfirmed) {
-          randomSelect();
-        }
-      });
+      randomSelect();
     }
   } else if (message === 'success') {
     Swal.fire({

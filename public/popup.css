@@ -4,6 +4,15 @@
   padding: 15px;
 }
 
+a,p {
+  font-size: small;
+}
+
+hr.solid {
+  border-top: 1px solid #bbb;
+  border-radius: 5px;
+}
+
 /* CSS */
 .button-25 {
   background-color: #36A9AE;
@@ -13,20 +22,19 @@
   box-shadow: rgba(0, 0, 0, 0.12) 0 1px 1px;
   color: #FFFFFF;
   cursor: pointer;
-  display: block;
   font-family: -apple-system,".SFNSDisplay-Regular","Helvetica Neue",Helvetica,Arial,sans-serif;
   font-size: 17px;
   line-height: 100%;
   margin: 0;
   outline: 0;
-  padding: 11px 15px 12px;
+  padding: 11px 15px 15px;
   text-align: center;
   transition: box-shadow .05s ease-in-out,opacity .05s ease-in-out;
   user-select: none;
   -webkit-user-select: none;
   touch-action: manipulation;
-  width: 100%;
-  margin-block: 10px;
+  width: 90%;
+  margin-block: 8px;
 }
 
 .button-25:hover {
