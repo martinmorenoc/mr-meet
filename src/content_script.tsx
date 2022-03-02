@@ -1,21 +1,39 @@
 import Swal from 'sweetalert2';
 
-const checkParticipants = () => {
+const participantSwal = Swal.mixin({
+  icon: 'warning',
+  title: chrome.i18n.getMessage('somethingWentWrong'),
+  showConfirmButton: true,
+});
+
+const takingAttendanceSwal = Swal.mixin({
+  allowEscapeKey: false,
+  allowOutsideClick: false,
+  timer: 10000,
+  timerProgressBar: true,
+  didOpen: () => {
+    Swal.showLoading();
+  },
+  didClose: () => {
+    Swal.fire({
+      icon: 'error',
+      title: 'Timeout',
+      text: chrome.i18n.getMessage('somethingWentWrong'),
+      showConfirmButton: true,
+    });
+  },
+});
+
+const isTabOpenAndHasParticipants = () => {
   const participantsCount = document.querySelectorAll('[role=listitem]').length;
   if (participantsCount === 0) {
-    Swal.fire({
-      icon: 'info',
-      title: chrome.i18n.getMessage('somethingWentWrong'),
+    participantSwal.fire({
       text: chrome.i18n.getMessage('openParticipantsTab'),
-      showConfirmButton: true,
     });
     return false;
   } if (participantsCount === 1) {
-    Swal.fire({
-      icon: 'info',
-      title: chrome.i18n.getMessage('somethingWentWrong'),
+    participantSwal.fire({
       text: chrome.i18n.getMessage('noParticipants'),
-      showConfirmButton: true,
     });
     return false;
   }
@@ -63,92 +81,63 @@ const randomSelect = () => {
   });
 };
 
-chrome.runtime.onMessage.addListener(async (msg) => {
+chrome.runtime.onMessage.addListener(async (msg, sender, sendResponse) => {
   const { message } = msg;
   if (message === 'showAttendanceModal') {
-    const isTabOpenAndHasParticipants = checkParticipants();
-    if (isTabOpenAndHasParticipants) {
-      await Swal.fire({
-        title: chrome.i18n.getMessage('selectACourse'),
-        input: 'select',
-        inputOptions: msg.classNames,
-        inputPlaceholder: chrome.i18n.getMessage('attendanceModalPlaceHolder'),
-        showCancelButton: true,
-        showDenyButton: true,
-        confirmButtonText: chrome.i18n.getMessage('attendanceModalConfirmButton'),
-        cancelButtonText: chrome.i18n.getMessage('modalCancelButton'),
-        denyButtonText: chrome.i18n.getMessage('attendanceModalNewCourseButton'),
-        denyButtonColor: 'LightSeaGreen',
-        inputValidator: (value) => new Promise((resolve) => {
-          if (!value) {
-            resolve(chrome.i18n.getMessage('noCourseSelected'));
-          }
-          resolve(null);
-        }),
-      }).then(async (result) => {
-        if (result.isConfirmed && result.value) {
-          Swal.fire({
-            title: chrome.i18n.getMessage('takingAttendanceModalTitle'),
-            allowEscapeKey: false,
-            allowOutsideClick: false,
-            timer: 10000,
-            didOpen: () => {
-              Swal.showLoading();
-            },
-            didClose: () => {
-              Swal.fire({
-                icon: 'error',
-                title: 'Timeout',
-                text: chrome.i18n.getMessage('somethingWentWrong'),
-                showConfirmButton: true,
-              });
-            },
-          });
-          takeAttendance(msg.classNames[result.value], msg.authToken, result.value);
-        } else if (result.isDenied) {
-          const { value: className } = await Swal.fire({
-            title: chrome.i18n.getMessage('newCourseModalTitle'),
-            input: 'text',
-            inputPlaceholder: chrome.i18n.getMessage('newCourseModalPlaceHolder'),
-            inputAttributes: {
-              'aria-label': 'Type your class name here',
-            },
-            showCancelButton: true,
-            inputValidator: (value) => new Promise((resolve) => {
-              if (Object.values(msg.classNames).includes(value)) {
-                resolve(chrome.i18n.getMessage('newCourseModalAlreadyExists'));
-              }
-              resolve(null);
-            }),
-          });
-          if (className) {
-            Swal.fire({
-              title: chrome.i18n.getMessage('creatingFilesAndTakingAttendance'),
-              allowEscapeKey: false,
-              allowOutsideClick: false,
-              timer: 10000,
-              didOpen: () => {
-                Swal.showLoading();
-              },
-              didClose: () => {
-                Swal.fire({
-                  icon: 'error',
-                  title: 'Timeout',
-                  text: chrome.i18n.getMessage('somethingWentWrong'),
-                  showConfirmButton: true,
-                });
-              },
-            });
-            takeAttendance(className, msg.authToken);
-          }
+    await Swal.fire({
+      title: chrome.i18n.getMessage('selectACourse'),
+      input: 'select',
+      inputOptions: msg.classNames,
+      inputPlaceholder: chrome.i18n.getMessage('attendanceModalPlaceHolder'),
+      showCancelButton: true,
+      showDenyButton: true,
+      confirmButtonText: chrome.i18n.getMessage('attendanceModalConfirmButton'),
+      cancelButtonText: chrome.i18n.getMessage('modalCancelButton'),
+      denyButtonText: chrome.i18n.getMessage('attendanceModalNewCourseButton'),
+      denyButtonColor: 'LightSeaGreen',
+      inputValidator: (value) => new Promise((resolve) => {
+        if (!value) {
+          resolve(chrome.i18n.getMessage('noCourseSelected'));
         }
-      });
-    }
+        resolve(null);
+      }),
+    }).then(async (result) => {
+      if (result.isConfirmed && result.value) {
+        takingAttendanceSwal.fire({
+          title: chrome.i18n.getMessage('takingAttendanceModalTitle'),
+        });
+        takeAttendance(msg.classNames[result.value], msg.authToken, result.value);
+      } else if (result.isDenied) {
+        const { value: className } = await Swal.fire({
+          title: chrome.i18n.getMessage('newCourseModalTitle'),
+          input: 'text',
+          inputPlaceholder: chrome.i18n.getMessage('newCourseModalPlaceHolder'),
+          inputAttributes: {
+            'aria-label': 'Type your class name here',
+          },
+          showCancelButton: true,
+          inputValidator: (value) => new Promise((resolve) => {
+            if (Object.values(msg.classNames).includes(value)) {
+              resolve(chrome.i18n.getMessage('newCourseModalAlreadyExists'));
+            }
+            resolve(null);
+          }),
+        });
+        if (className) {
+          takingAttendanceSwal.fire({
+            title: chrome.i18n.getMessage('creatingFilesAndTakingAttendance'),
+            timer: 15000,
+          });
+          takeAttendance(className, msg.authToken);
+        }
+      }
+    });
   } else if (message === 'showRandomSelectModal') {
-    const isTabOpenAndHasParticipants = checkParticipants();
-    if (isTabOpenAndHasParticipants) {
-      randomSelect();
-    }
+    randomSelect();
+  } else if (message === 'isTabOpenAndHasParticipants') {
+    sendResponse({
+      isTabOpenAndHasParticipants: isTabOpenAndHasParticipants(),
+    });
   } else if (message === 'success') {
     Swal.fire({
       title: chrome.i18n.getMessage('attendanceTaken'),
