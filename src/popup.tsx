@@ -60,7 +60,7 @@ function Popup() {
       <div>
         <img src="../images/128.png" width="100" height="100" alt="logo" />
       </div>
-      <h2>{chrome.i18n.getMessage('titlePopup')}</h2>
+      <h1>{chrome.i18n.getMessage('titlePopup')}</h1>
       <p>{description}</p>
       <button
         disabled={!isInMeeting}
@@ -78,6 +78,16 @@ function Popup() {
       >
         {chrome.i18n.getMessage('randomSelectButton')}
       </button>
+      <br />
+      <hr className="solid" />
+      <p>{chrome.i18n.getMessage('likeExtensionText')}</p>
+      <a
+        href="https://chrome.google.com/webstore/detail/mr-meet-take-attendance-i/cipejegejindaigfnpffjkihnilkkflc"
+        target="_blank"
+        rel="noreferrer"
+      >
+        {chrome.i18n.getMessage('rateUsText')}
+      </a>
     </div>
   );
 }
