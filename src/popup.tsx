@@ -16,19 +16,27 @@ function Popup() {
 
   const takeAttendance = () => {
     chrome.identity.getAuthToken({ interactive: true }, async (authToken: string) => {
-      const gettedFolder = await getFileByName(chrome.i18n.getMessage('mrMeetFolderName'), 'folder', authToken);
-      const mrMeetFolder = gettedFolder || await createFolder(chrome.i18n.getMessage('mrMeetFolderName'), authToken);
-      chrome.storage.sync.set({ mrMeetFolderId: mrMeetFolder.id });
-      const classNames = await getFolderFileNames(mrMeetFolder.id, 'folder', authToken);
       chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
         const tab = tabs[0];
         if (tab.id) {
           chrome.tabs.sendMessage(
             tab.id,
-            {
-              message: 'showAttendanceModal',
-              classNames,
-              authToken,
+            { message: 'isTabOpenAndHasParticipants' },
+            async ({ isTabOpenAndHasParticipants }) => {
+              if (tab.id && isTabOpenAndHasParticipants) {
+                const gettedFolder = await getFileByName(chrome.i18n.getMessage('mrMeetFolderName'), 'folder', authToken);
+                const mrMeetFolder = gettedFolder || await createFolder(chrome.i18n.getMessage('mrMeetFolderName'), authToken);
+                chrome.storage.sync.set({ mrMeetFolderId: mrMeetFolder.id });
+                const classNames = await getFolderFileNames(mrMeetFolder.id, 'folder', authToken);
+                chrome.tabs.sendMessage(
+                  tab.id,
+                  {
+                    message: 'showAttendanceModal',
+                    classNames,
+                    authToken,
+                  },
+                );
+              }
             },
           );
         }
@@ -42,8 +50,14 @@ function Popup() {
       if (tab.id) {
         chrome.tabs.sendMessage(
           tab.id,
-          {
-            message: 'showRandomSelectModal',
+          { message: 'isTabOpenAndHasParticipants' },
+          ({ isTabOpenAndHasParticipants }) => {
+            if (tab.id && isTabOpenAndHasParticipants) {
+              chrome.tabs.sendMessage(
+                tab.id,
+                { message: 'showRandomSelectModal' },
+              );
+            }
           },
         );
       }
