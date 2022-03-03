@@ -1,5 +1,7 @@
 # <img src="public/images/128.png" width="48"> Mr Meet
-![build-badge](https://img.shields.io/badge/build-passing-green.svg)
+![build-badge](https://img.shields.io/badge/build-passing-green.svg) ![version](https://img.shields.io/chrome-web-store/v/cipejegejindaigfnpffjkihnilkkflc) ![users](https://img.shields.io/chrome-web-store/users/cipejegejindaigfnpffjkihnilkkflc)
+
+[Available on the Chrome Web Store](https://chrome.google.com/webstore/detail/mr-meet-take-attendance-i/cipejegejindaigfnpffjkihnilkkflc)
 ## Chrome extension to add new class-oriented functionalities to Google Meet
 
 - **Take attendance** functionality integrated with Google Drive and Spreadsheets
@@ -19,8 +21,6 @@
 <img width="600" alt="summarySheet" src="https://user-images.githubusercontent.com/43624675/156102403-53baca5f-6523-467f-ad4a-5904fa9a955c.png">
 
 ### Random Select
-<img width="600" alt="randomSelectModal" src="https://user-images.githubusercontent.com/43624675/156106495-952379d1-baba-4cb2-a5ea-216890a56e7d.png">
-
 <img width="600" alt="randomSelectSuccess" src="https://user-images.githubusercontent.com/43624675/156106558-cdb8513e-aae5-4b55-b5dc-c906f0acfa12.png">
 
 ## Development
