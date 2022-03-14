@@ -4,7 +4,9 @@
   "name": "__MSG_appName__",
   "description": "__MSG_appDesc__",
   "default_locale": "en",
-  "version": "1.0.1",
+  "version": "1.0.2",
+  "container": "GOOGLE_DRIVE",
+  "api_console_project_id": "426988588387",
   "oauth2":{
 		"client_id":"426988588387-45t865hnqu44u4p25lba8ihpgjgm2jn2.apps.googleusercontent.com",
 		"scopes":["https://www.googleapis.com/auth/drive.file"]
