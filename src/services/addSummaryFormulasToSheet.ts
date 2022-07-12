@@ -7,7 +7,7 @@ export default async function addSummaryFormulasToSheet(spreadsheetId: string, t
   const formulas = Array.from({ length: 200 }, (_, i) => [
     '',
     `=IF(SUM({Details!B${i + 2}:${i + 2}}) = 0; ""; SUM({Details!B${i + 2}:${i + 2}}))`,
-    `=IF(COUNT({Details!B${i + 2}:${i + 2}}) = 0; ""; CONCATENATE(B${i + 2}/COUNT({Details!B${i + 2}:${i + 2}})*100; "%"))`,
+    `=IF(COUNT({Details!B${i + 2}:${i + 2}}) = 0; ""; CONCATENATE(ROUND(B${i + 2}/COUNT({Details!B${i + 2}:${i + 2}})*100, 2); "%"))`,
   ]);
   values = values.concat(formulas);
   const range = 'Summary!A1';
