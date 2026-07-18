@@ -294,8 +294,8 @@ function ActionButton({
 function Footer() {
   return (
     <footer className="footer">
-      <span>{chrome.i18n.getMessage('likeExtensionText')}</span>
-      <div className="footer__links">
+      <p className="footer__text">
+        {chrome.i18n.getMessage('likeExtensionText')}{' '}
         <a
           href="https://chrome.google.com/webstore/detail/cipejegejindaigfnpffjkihnilkkflc"
           target="_blank"
@@ -303,6 +303,7 @@ function Footer() {
         >
           {chrome.i18n.getMessage('rateUsText')}
         </a>
+        {' · '}
         <a
           href="https://buymeacoffee.com/martinmoreno"
           target="_blank"
@@ -311,7 +312,7 @@ function Footer() {
         >
           {chrome.i18n.getMessage('buyMeACoffeeText')}
         </a>
-      </div>
+      </p>
     </footer>
   );
 }
