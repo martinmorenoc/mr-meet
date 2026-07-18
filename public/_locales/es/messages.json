@@ -89,6 +89,18 @@
     "enabledDescriptionPopup": {
         "message": "Listo en esta reunión"
     },
+    "checkingMeeting": {
+        "message": "Comprobando reunión..."
+    },
+    "preparingAttendance": {
+        "message": "Preparando..."
+    },
+    "loadingRandomSelect": {
+        "message": "Cargando participantes..."
+    },
+    "contentScriptUnavailable": {
+        "message": "Recarga la pestaña de Google Meet e inténtalo de nuevo"
+    },
     "titlePopup": {
         "message": "Funciones Mr Meet"
     },

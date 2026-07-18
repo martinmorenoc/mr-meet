@@ -3,12 +3,18 @@ import ReactDOM from 'react-dom';
 import { getMeetingIdFromUrl } from './utils';
 
 type ActionId = 'attendance' | 'random';
+type ActionState = 'idle' | ActionId;
 
 interface PopupAction {
   id: ActionId;
   label: string;
   description: string;
   icon: string;
+}
+
+interface MeetingContext {
+  meetingId: string;
+  tabId: number;
 }
 
 const getPopupActions = (): PopupAction[] => [
@@ -28,97 +34,120 @@ const getPopupActions = (): PopupAction[] => [
 
 const getAuthToken = () =>
   new Promise<string>((resolve, reject) => {
-    chrome.identity.getAuthToken({ interactive: true }, (authToken) => {
-      if (chrome.runtime.lastError) {
-        reject(new Error(chrome.runtime.lastError.message));
+    chrome.identity.getAuthToken({ interactive: false }, (cachedToken) => {
+      if (cachedToken) {
+        resolve(cachedToken);
         return;
       }
 
-      if (!authToken) {
-        reject(new Error('No auth token returned'));
-        return;
-      }
+      chrome.identity.getAuthToken({ interactive: true }, (authToken) => {
+        if (chrome.runtime.lastError) {
+          reject(new Error(chrome.runtime.lastError.message));
+          return;
+        }
 
-      resolve(authToken);
+        if (!authToken) {
+          reject(new Error('No auth token returned'));
+          return;
+        }
+
+        resolve(authToken);
+      });
     });
   });
 
-const getActiveMeetTab = async () => {
-  const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
-  const currentTab = tabs[0];
-
-  if (!currentTab?.id || !currentTab.url) {
-    throw new Error('No active tab');
+const sendToTab = async (tabId: number, message: Record<string, unknown>) => {
+  try {
+    await chrome.tabs.sendMessage(tabId, message);
+  } catch {
+    throw new Error(chrome.i18n.getMessage('contentScriptUnavailable'));
   }
-
-  const meetingId = getMeetingIdFromUrl(currentTab.url);
-  if (!meetingId) {
-    throw new Error('Invalid meeting URL');
-  }
-
-  return {
-    meetingId,
-    tabId: currentTab.id,
-  };
 };
 
 function Popup() {
-  const [isInMeeting, setIsInMeeting] = useState<boolean>(false);
+  const [meetingContext, setMeetingContext] = useState<MeetingContext | null>(null);
+  const [isCheckingMeeting, setIsCheckingMeeting] = useState(true);
+  const [actionState, setActionState] = useState<ActionState>('idle');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const checkIfInMeeting = useCallback(async () => {
-    const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
-    const currentTab = tabs[0];
-    setIsInMeeting(Boolean(currentTab?.url && getMeetingIdFromUrl(currentTab.url)));
-  }, []);
-
-  const handleTakeAttendance = useCallback(async () => {
-    setErrorMessage(null);
-
-    try {
-      const authToken = await getAuthToken();
-      const { meetingId, tabId } = await getActiveMeetTab();
-      await chrome.runtime.sendMessage({
-        message: 'prepareAttendanceModal',
-        authToken,
-        meetingId,
-        tabId,
-      });
-    } catch (error) {
-      const message = error instanceof Error ? error.message : 'Unknown error';
-      console.error('Error taking attendance:', error);
-      setErrorMessage(message);
-    }
-  }, []);
-
-  const handleRandomSelect = useCallback(async () => {
-    setErrorMessage(null);
-
-    try {
-      const authToken = await getAuthToken();
-      const { meetingId, tabId } = await getActiveMeetTab();
-      await chrome.runtime.sendMessage({
-        message: 'randomSelect',
-        authToken,
-        meetingId,
-        tabId,
-      });
-    } catch (error) {
-      const message = error instanceof Error ? error.message : 'Unknown error';
-      console.error('Error in random selection:', error);
-      setErrorMessage(message);
-    }
-  }, []);
-
   useEffect(() => {
-    checkIfInMeeting();
-  }, [checkIfInMeeting]);
+    const resolveMeetingContext = async () => {
+      try {
+        const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
+        const currentTab = tabs[0];
+        const meetingId = currentTab?.url ? getMeetingIdFromUrl(currentTab.url) : null;
+
+        if (meetingId && currentTab?.id) {
+          setMeetingContext({ meetingId, tabId: currentTab.id });
+        }
+      } finally {
+        setIsCheckingMeeting(false);
+      }
+    };
+
+    void resolveMeetingContext();
+  }, []);
+
+  const runAction = useCallback(
+    async (action: ActionId) => {
+      if (!meetingContext || actionState !== 'idle') {
+        return;
+      }
+
+      setErrorMessage(null);
+      setActionState(action);
+
+      const loadingTitle =
+        action === 'attendance'
+          ? chrome.i18n.getMessage('preparingAttendance')
+          : chrome.i18n.getMessage('loadingRandomSelect');
+
+      try {
+        await sendToTab(meetingContext.tabId, {
+          message: 'showLoading',
+          title: loadingTitle,
+        });
+
+        const authToken = await getAuthToken();
+
+        chrome.runtime.sendMessage({
+          message: action === 'attendance' ? 'prepareAttendanceModal' : 'randomSelect',
+          authToken,
+          meetingId: meetingContext.meetingId,
+          tabId: meetingContext.tabId,
+        });
+
+        window.close();
+      } catch (error) {
+        setActionState('idle');
+
+        try {
+          await sendToTab(meetingContext.tabId, { message: 'hideLoading' });
+        } catch {
+          // Tab may be unavailable; popup error is enough.
+        }
+
+        setErrorMessage((error as Error).message || chrome.i18n.getMessage('somethingWentWrong'));
+      }
+    },
+    [actionState, meetingContext],
+  );
+
+  const handleTakeAttendance = useCallback(() => {
+    void runAction('attendance');
+  }, [runAction]);
+
+  const handleRandomSelect = useCallback(() => {
+    void runAction('random');
+  }, [runAction]);
 
   return (
     <div className="container">
       <Header />
       <Content
-        isInMeeting={isInMeeting}
+        isInMeeting={Boolean(meetingContext)}
+        isCheckingMeeting={isCheckingMeeting}
+        actionState={actionState}
         errorMessage={errorMessage}
         onTakeAttendance={handleTakeAttendance}
         onRandomSelect={handleRandomSelect}
@@ -144,6 +173,8 @@ function Header() {
 
 interface ContentProps {
   isInMeeting: boolean;
+  isCheckingMeeting: boolean;
+  actionState: ActionState;
   errorMessage: string | null;
   onTakeAttendance: () => void;
   onRandomSelect: () => void;
@@ -151,6 +182,8 @@ interface ContentProps {
 
 function Content({
   isInMeeting,
+  isCheckingMeeting,
+  actionState,
   errorMessage,
   onTakeAttendance,
   onRandomSelect,
@@ -160,17 +193,25 @@ function Content({
     attendance: onTakeAttendance,
     random: onRandomSelect,
   };
+  const loadingLabels: Record<ActionId, string> = {
+    attendance: chrome.i18n.getMessage('preparingAttendance'),
+    random: chrome.i18n.getMessage('loadingRandomSelect'),
+  };
+  const isBusy = actionState !== 'idle';
+  const buttonsDisabled = !isInMeeting || isCheckingMeeting || isBusy;
 
   return (
     <main>
-      <MeetingStatus isInMeeting={isInMeeting} />
+      <MeetingStatus isInMeeting={isInMeeting} isCheckingMeeting={isCheckingMeeting} />
       {errorMessage && <p className="error-banner">{errorMessage}</p>}
       <div className="actions">
         {actions.map((action) => (
           <ActionButton
             key={action.id}
             action={action}
-            disabled={!isInMeeting}
+            disabled={buttonsDisabled}
+            isLoading={actionState === action.id}
+            loadingLabel={loadingLabels[action.id]}
             onClick={handlers[action.id]}
           />
         ))}
@@ -181,17 +222,26 @@ function Content({
 
 interface MeetingStatusProps {
   isInMeeting: boolean;
+  isCheckingMeeting: boolean;
 }
 
-function MeetingStatus({ isInMeeting }: MeetingStatusProps) {
+function MeetingStatus({ isInMeeting, isCheckingMeeting }: MeetingStatusProps) {
+  let statusMessage = chrome.i18n.getMessage('disabledDescriptionPopup');
+
+  if (isCheckingMeeting) {
+    statusMessage = chrome.i18n.getMessage('checkingMeeting');
+  } else if (isInMeeting) {
+    statusMessage = chrome.i18n.getMessage('enabledDescriptionPopup');
+  }
+
   return (
-    <div className={isInMeeting ? 'status status--active' : 'status'}>
+    <div
+      className={
+        isCheckingMeeting ? 'status' : isInMeeting ? 'status status--active' : 'status'
+      }
+    >
       <span className="status__dot" />
-      <span>
-        {isInMeeting
-          ? chrome.i18n.getMessage('enabledDescriptionPopup')
-          : chrome.i18n.getMessage('disabledDescriptionPopup')}
-      </span>
+      <span>{statusMessage}</span>
     </div>
   );
 }
@@ -199,19 +249,44 @@ function MeetingStatus({ isInMeeting }: MeetingStatusProps) {
 interface ActionButtonProps {
   action: PopupAction;
   disabled: boolean;
+  isLoading: boolean;
+  loadingLabel: string;
   onClick: () => void;
 }
 
-function ActionButton({ action, disabled, onClick }: ActionButtonProps) {
+function ActionButton({
+  action,
+  disabled,
+  isLoading,
+  loadingLabel,
+  onClick,
+}: ActionButtonProps) {
   return (
-    <button disabled={disabled} className="action-button" type="button" onClick={onClick}>
-      <span className="action-button__icon" aria-hidden="true">
-        {action.icon}
-      </span>
-      <span className="action-button__content">
-        <span className="action-button__label">{action.label}</span>
-        <span className="action-button__description">{action.description}</span>
-      </span>
+    <button
+      disabled={disabled}
+      className={`action-button${isLoading ? ' action-button--loading' : ''}`}
+      type="button"
+      onClick={onClick}
+      aria-busy={isLoading}
+    >
+      {isLoading ? (
+        <>
+          <span className="action-button__spinner" aria-hidden="true" />
+          <span className="action-button__content">
+            <span className="action-button__label">{loadingLabel}</span>
+          </span>
+        </>
+      ) : (
+        <>
+          <span className="action-button__icon" aria-hidden="true">
+            {action.icon}
+          </span>
+          <span className="action-button__content">
+            <span className="action-button__label">{action.label}</span>
+            <span className="action-button__description">{action.description}</span>
+          </span>
+        </>
+      )}
     </button>
   );
 }
