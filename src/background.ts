@@ -20,7 +20,16 @@ interface RandomSelectRequest extends BaseRequest {
   meetingId: string;
 }
 
-type RuntimeRequest = TakeAttendanceRequest | RandomSelectRequest;
+interface PrepareAttendanceModalRequest extends BaseRequest {
+  message: 'prepareAttendanceModal';
+  meetingId: string;
+  tabId: number;
+}
+
+type RuntimeRequest =
+  | TakeAttendanceRequest
+  | RandomSelectRequest
+  | PrepareAttendanceModalRequest;
 
 const sendMessageToTab = async (tabId: number | undefined, message: Record<string, unknown>) => {
   if (tabId) {
@@ -114,6 +123,27 @@ const handleTakeAttendance = async (request: TakeAttendanceRequest) => {
   });
 };
 
+const getMrMeetFolder = async (googleDriveService: GoogleDriveService) => {
+  const folderName = chrome.i18n.getMessage('mrMeetFolderName');
+  const existingFolder = await googleDriveService.getFileByName(folderName, 'folder');
+  return existingFolder || googleDriveService.createFolder(folderName);
+};
+
+const handlePrepareAttendanceModal = async (request: PrepareAttendanceModalRequest) => {
+  const googleDriveService = new GoogleDriveService(request.authToken);
+  const mrMeetFolder = await getMrMeetFolder(googleDriveService);
+  await chrome.storage.sync.set({ mrMeetFolderId: mrMeetFolder.id });
+  const classNames = await googleDriveService.getFolderFileNames(mrMeetFolder.id, 'folder');
+
+  await sendMessageToTab(request.tabId, {
+    message: 'showAttendanceModal',
+    classNames,
+    authToken: request.authToken,
+    meetingId: request.meetingId,
+    tabId: request.tabId,
+  });
+};
+
 const handleRandomSelect = async (request: RandomSelectRequest) => {
   const googleMeetService = new GoogleMeetService(request.authToken);
   const participantNames = await googleMeetService.listParticipantNamesByMeetingId(
@@ -130,6 +160,8 @@ const handleRuntimeMessage = async (request: RuntimeRequest) => {
   try {
     if (request.message === 'takeAttendance') {
       await handleTakeAttendance(request);
+    } else if (request.message === 'prepareAttendanceModal') {
+      await handlePrepareAttendanceModal(request);
     } else if (request.message === 'randomSelect') {
       await handleRandomSelect(request);
     }

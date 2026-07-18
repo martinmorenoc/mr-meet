@@ -1,3 +1,9 @@
+export const getMeetingIdFromUrl = (url: string): string | null => {
+  const meetRegex = /meet.google.com\/(\w{3}-\w{4}-\w{3})/;
+  const match = url.match(meetRegex);
+  return match ? match[1] : null;
+};
+
 export function sortDictionaryByValue(obj: Record<string, string>) {
   return Object.fromEntries(Object.entries(obj).sort(([, a], [, b]) => a.localeCompare(b)));
 }
