@@ -295,13 +295,23 @@ function Footer() {
   return (
     <footer className="footer">
       <span>{chrome.i18n.getMessage('likeExtensionText')}</span>
-      <a
-        href="https://chrome.google.com/webstore/detail/cipejegejindaigfnpffjkihnilkkflc"
-        target="_blank"
-        rel="noreferrer"
-      >
-        {chrome.i18n.getMessage('rateUsText')}
-      </a>
+      <div className="footer__links">
+        <a
+          href="https://chrome.google.com/webstore/detail/cipejegejindaigfnpffjkihnilkkflc"
+          target="_blank"
+          rel="noreferrer"
+        >
+          {chrome.i18n.getMessage('rateUsText')}
+        </a>
+        <a
+          href="https://buymeacoffee.com/martinmoreno"
+          target="_blank"
+          rel="noreferrer"
+          title={chrome.i18n.getMessage('supportProjectTitle')}
+        >
+          {chrome.i18n.getMessage('buyMeACoffeeText')}
+        </a>
+      </div>
     </footer>
   );
 }

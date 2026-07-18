@@ -113,6 +113,12 @@
     "rateUsText": {
         "message": "Escribe una reseña!"
     },
+    "buyMeACoffeeText": {
+        "message": "Apoya el proyecto"
+    },
+    "supportProjectTitle": {
+        "message": "Aporte opcional para apoyar el desarrollo"
+    },
     "totalAttendance": {
         "message": "Asistencia Total"
     },

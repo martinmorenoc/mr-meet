@@ -211,6 +211,13 @@ body {
   font-size: 12px;
 }
 
+.footer__links {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
 .footer a {
   color: #1b766e;
   font-weight: 700;

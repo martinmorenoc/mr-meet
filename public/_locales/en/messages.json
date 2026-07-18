@@ -113,6 +113,12 @@
     "rateUsText": {
         "message": "Please rate us!"
     },
+    "buyMeACoffeeText": {
+        "message": "Support the project"
+    },
+    "supportProjectTitle": {
+        "message": "Optional tip to support development"
+    },
     "totalAttendance": {
         "message": "Total Attendance"
     },
