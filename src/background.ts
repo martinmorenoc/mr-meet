@@ -173,6 +173,7 @@ const handleRuntimeMessage = async (request: RuntimeRequest) => {
   }
 };
 
-chrome.runtime.onMessage.addListener((request: RuntimeRequest) => {
+chrome.runtime.onMessage.addListener((request: RuntimeRequest, _sender, sendResponse) => {
   void handleRuntimeMessage(request);
+  sendResponse({ ok: true });
 });

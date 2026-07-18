@@ -69,6 +69,7 @@ chrome.runtime.onMessage.addListener(async (msg, sender, sendResponse) => {
         new Promise((resolve) => {
           if (!value) {
             resolve(chrome.i18n.getMessage('noCourseSelected'));
+            return;
           }
           resolve(null);
         }),
@@ -88,20 +89,27 @@ chrome.runtime.onMessage.addListener(async (msg, sender, sendResponse) => {
           input: 'text',
           inputPlaceholder: chrome.i18n.getMessage('newCourseModalPlaceHolder'),
           inputAttributes: {
-            'aria-label': 'Type your class name here',
+            'aria-label': chrome.i18n.getMessage('newCourseModalAriaLabel'),
           },
           showCancelButton: true,
           inputValidator: (value) =>
             new Promise((resolve) => {
-              if (Object.values(msg.classNames).includes(value)) {
+              const normalizedClassName = value?.trim().toLowerCase() ?? '';
+              const existingClassNames = (Object.values(msg.classNames) as string[]).map((name) =>
+                name.trim().toLowerCase(),
+              );
+
+              if (existingClassNames.includes(normalizedClassName)) {
                 resolve(chrome.i18n.getMessage('newCourseModalAlreadyExists'));
+                return;
               }
               resolve(null);
             }),
         });
-        if (className) {
+        const trimmedClassName = className?.trim();
+        if (trimmedClassName) {
           showLoading(chrome.i18n.getMessage('creatingFilesAndTakingAttendance'));
-          takeAttendance(className, msg.authToken, msg.meetingId, msg.tabId);
+          takeAttendance(trimmedClassName, msg.authToken, msg.meetingId, msg.tabId);
         }
       }
     });
