@@ -90,6 +90,18 @@ body {
   background: #18a779;
 }
 
+.error-banner {
+  margin: 10px 0 0;
+  padding: 9px 11px;
+  border: 1px solid #efb8b8;
+  border-radius: 8px;
+  background: #fff1f1;
+  color: #9b2c2c;
+  font-size: 12px;
+  line-height: 1.35;
+  text-align: left;
+}
+
 .actions {
   display: grid;
   gap: 10px;

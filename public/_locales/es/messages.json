@@ -92,6 +92,9 @@
     "titlePopup": {
         "message": "Funciones Mr Meet"
     },
+    "subtitlePopup": {
+        "message": "Herramientas de asistencia para tus clases en Google Meet"
+    },
     "likeExtensionText": {
         "message": "¿Te gusta la extensión?"
     },

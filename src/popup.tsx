@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import ReactDOM from 'react-dom';
-import GoogleDriveService from './services/google-drive.service';
+import { getMeetingIdFromUrl } from './utils';
 
 type ActionId = 'attendance' | 'random';
 
@@ -11,7 +11,7 @@ interface PopupAction {
   icon: string;
 }
 
-const ACTIONS: PopupAction[] = [
+const getPopupActions = (): PopupAction[] => [
   {
     id: 'attendance',
     label: chrome.i18n.getMessage('attendanceButton'),
@@ -25,12 +25,6 @@ const ACTIONS: PopupAction[] = [
     icon: '?',
   },
 ];
-
-const getMeetingIdFromUrl = (url: string): string | null => {
-  const meetRegex = /meet.google.com\/(\w{3}-\w{4}-\w{3})/;
-  const match = url.match(meetRegex);
-  return match ? match[1] : null;
-};
 
 const getAuthToken = () =>
   new Promise<string>((resolve, reject) => {
@@ -70,77 +64,62 @@ const getActiveMeetTab = async () => {
 
 function Popup() {
   const [isInMeeting, setIsInMeeting] = useState<boolean>(false);
-
-  const getMrMeetFolder = async (googleDriveService: GoogleDriveService) => {
-    const folderName = chrome.i18n.getMessage('mrMeetFolderName');
-    const existingFolder = await googleDriveService.getFileByName(folderName, 'folder');
-    return existingFolder || googleDriveService.createFolder(folderName);
-  };
-
-  const initializeAttendanceProcess = async (
-    tabId: number,
-    authToken: string,
-    meetingId: string,
-  ) => {
-    const googleDriveService = new GoogleDriveService(authToken);
-
-    // Obtener o crear la carpeta principal
-    const mrMeetFolder = await getMrMeetFolder(googleDriveService);
-    await chrome.storage.sync.set({ mrMeetFolderId: mrMeetFolder.id });
-
-    // Obtener nombres de las clases
-    const classNames = await googleDriveService.getFolderFileNames(mrMeetFolder.id, 'folder');
-
-    // Enviar mensaje al content script
-    chrome.tabs.sendMessage(tabId, {
-      message: 'showAttendanceModal',
-      classNames,
-      authToken,
-      meetingId,
-      tabId,
-    });
-  };
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const checkIfInMeeting = useCallback(async () => {
     const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
     const currentTab = tabs[0];
-    setIsInMeeting(Boolean(currentTab.url?.includes('meet.google.com/')));
+    setIsInMeeting(Boolean(currentTab?.url && getMeetingIdFromUrl(currentTab.url)));
   }, []);
 
   const handleTakeAttendance = useCallback(async () => {
+    setErrorMessage(null);
+
     try {
       const authToken = await getAuthToken();
       const { meetingId, tabId } = await getActiveMeetTab();
-      await initializeAttendanceProcess(tabId, authToken, meetingId);
+      await chrome.runtime.sendMessage({
+        message: 'prepareAttendanceModal',
+        authToken,
+        meetingId,
+        tabId,
+      });
     } catch (error) {
+      const message = error instanceof Error ? error.message : 'Unknown error';
       console.error('Error taking attendance:', error);
+      setErrorMessage(message);
     }
   }, []);
 
   const handleRandomSelect = useCallback(async () => {
+    setErrorMessage(null);
+
     try {
       const authToken = await getAuthToken();
       const { meetingId, tabId } = await getActiveMeetTab();
-      chrome.runtime.sendMessage({
+      await chrome.runtime.sendMessage({
         message: 'randomSelect',
         authToken,
         meetingId,
         tabId,
       });
     } catch (error) {
+      const message = error instanceof Error ? error.message : 'Unknown error';
       console.error('Error in random selection:', error);
+      setErrorMessage(message);
     }
   }, []);
 
   useEffect(() => {
     checkIfInMeeting();
-  }, []);
+  }, [checkIfInMeeting]);
 
   return (
     <div className="container">
       <Header />
       <Content
         isInMeeting={isInMeeting}
+        errorMessage={errorMessage}
         onTakeAttendance={handleTakeAttendance}
         onRandomSelect={handleRandomSelect}
       />
@@ -165,11 +144,18 @@ function Header() {
 
 interface ContentProps {
   isInMeeting: boolean;
+  errorMessage: string | null;
   onTakeAttendance: () => void;
   onRandomSelect: () => void;
 }
 
-function Content({ isInMeeting, onTakeAttendance, onRandomSelect }: ContentProps) {
+function Content({
+  isInMeeting,
+  errorMessage,
+  onTakeAttendance,
+  onRandomSelect,
+}: ContentProps) {
+  const actions = getPopupActions();
   const handlers: Record<ActionId, () => void> = {
     attendance: onTakeAttendance,
     random: onRandomSelect,
@@ -178,8 +164,9 @@ function Content({ isInMeeting, onTakeAttendance, onRandomSelect }: ContentProps
   return (
     <main>
       <MeetingStatus isInMeeting={isInMeeting} />
+      {errorMessage && <p className="error-banner">{errorMessage}</p>}
       <div className="actions">
-        {ACTIONS.map((action) => (
+        {actions.map((action) => (
           <ActionButton
             key={action.id}
             action={action}
@@ -244,9 +231,27 @@ function Footer() {
   );
 }
 
-ReactDOM.render(
-  <React.StrictMode>
-    <Popup />
-  </React.StrictMode>,
-  document.getElementById('root'),
-);
+const mountPopup = () => {
+  const root = document.getElementById('root');
+  if (!root) {
+    return;
+  }
+
+  try {
+    ReactDOM.render(
+      <React.StrictMode>
+        <Popup />
+      </React.StrictMode>,
+      root,
+    );
+  } catch (error) {
+    console.error('Failed to mount popup:', error);
+    root.textContent = chrome.i18n.getMessage('somethingWentWrong');
+  }
+};
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', mountPopup);
+} else {
+  mountPopup();
+}

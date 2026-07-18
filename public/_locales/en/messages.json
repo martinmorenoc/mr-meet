@@ -86,6 +86,9 @@
     "titlePopup": {
         "message": "Mr Meet Features"
     },
+    "subtitlePopup": {
+        "message": "Attendance tools for your Google Meet classes"
+    },
     "disabledDescriptionPopup": {
         "message": "Features are enabled when you are in a meeting"
     },
