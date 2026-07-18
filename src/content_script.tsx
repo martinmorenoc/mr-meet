@@ -48,7 +48,12 @@ const randomSelect = (participantNames: string[]) => {
 
 chrome.runtime.onMessage.addListener(async (msg, sender, sendResponse) => {
   const { message } = msg;
-  if (message === 'showAttendanceModal') {
+  if (message === 'showLoading') {
+    showLoading(msg.title);
+  } else if (message === 'hideLoading') {
+    Swal.close();
+  } else if (message === 'showAttendanceModal') {
+    Swal.close();
     await Swal.fire({
       title: chrome.i18n.getMessage('selectACourse'),
       input: 'select',
@@ -101,6 +106,7 @@ chrome.runtime.onMessage.addListener(async (msg, sender, sendResponse) => {
       }
     });
   } else if (message === 'showRandomSelectModal') {
+    Swal.close();
     randomSelect(msg.participantNames);
   } else if (message === 'success') {
     Swal.fire({
@@ -115,6 +121,7 @@ chrome.runtime.onMessage.addListener(async (msg, sender, sendResponse) => {
       }
     });
   } else if (message === 'error') {
+    Swal.close();
     Swal.fire({
       position: 'center',
       icon: 'error',

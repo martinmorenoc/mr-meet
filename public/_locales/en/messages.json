@@ -95,6 +95,18 @@
     "enabledDescriptionPopup": {
         "message": "Ready in this meeting"
     },
+    "checkingMeeting": {
+        "message": "Checking meeting..."
+    },
+    "preparingAttendance": {
+        "message": "Preparing..."
+    },
+    "loadingRandomSelect": {
+        "message": "Loading participants..."
+    },
+    "contentScriptUnavailable": {
+        "message": "Reload the Google Meet tab and try again"
+    },
     "likeExtensionText": {
         "message": "Do you like the extension?"
     },

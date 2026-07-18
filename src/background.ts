@@ -18,6 +18,7 @@ interface TakeAttendanceRequest extends BaseRequest {
 interface RandomSelectRequest extends BaseRequest {
   message: 'randomSelect';
   meetingId: string;
+  tabId: number;
 }
 
 interface PrepareAttendanceModalRequest extends BaseRequest {
@@ -26,10 +27,7 @@ interface PrepareAttendanceModalRequest extends BaseRequest {
   tabId: number;
 }
 
-type RuntimeRequest =
-  | TakeAttendanceRequest
-  | RandomSelectRequest
-  | PrepareAttendanceModalRequest;
+type RuntimeRequest = TakeAttendanceRequest | RandomSelectRequest | PrepareAttendanceModalRequest;
 
 const sendMessageToTab = async (tabId: number | undefined, message: Record<string, unknown>) => {
   if (tabId) {
@@ -41,6 +39,12 @@ const sendMessageToTab = async (tabId: number | undefined, message: Record<strin
   if (activeTab.id) {
     await chrome.tabs.sendMessage(activeTab.id, message);
   }
+};
+
+const getMrMeetFolder = async (googleDriveService: GoogleDriveService) => {
+  const folderName = chrome.i18n.getMessage('mrMeetFolderName');
+  const existingFolder = await googleDriveService.getFileByName(folderName, 'folder');
+  return existingFolder || googleDriveService.createFolder(folderName);
 };
 
 const getClassFolderId = async (
@@ -92,6 +96,23 @@ const getOrCreateSpreadsheetId = async (
   return spreadsheet.id;
 };
 
+const handlePrepareAttendanceModal = async (request: PrepareAttendanceModalRequest) => {
+  const googleDriveService = new GoogleDriveService(request.authToken);
+  const mrMeetFolder = await getMrMeetFolder(googleDriveService);
+
+  await chrome.storage.sync.set({ mrMeetFolderId: mrMeetFolder.id });
+
+  const classNames = await googleDriveService.getFolderFileNames(mrMeetFolder.id, 'folder');
+
+  await sendMessageToTab(request.tabId, {
+    message: 'showAttendanceModal',
+    classNames,
+    authToken: request.authToken,
+    meetingId: request.meetingId,
+    tabId: request.tabId,
+  });
+};
+
 const handleTakeAttendance = async (request: TakeAttendanceRequest) => {
   const googleDriveService = new GoogleDriveService(request.authToken);
   const googleSheetsService = new GoogleSheetsService(request.authToken);
@@ -123,27 +144,6 @@ const handleTakeAttendance = async (request: TakeAttendanceRequest) => {
   });
 };
 
-const getMrMeetFolder = async (googleDriveService: GoogleDriveService) => {
-  const folderName = chrome.i18n.getMessage('mrMeetFolderName');
-  const existingFolder = await googleDriveService.getFileByName(folderName, 'folder');
-  return existingFolder || googleDriveService.createFolder(folderName);
-};
-
-const handlePrepareAttendanceModal = async (request: PrepareAttendanceModalRequest) => {
-  const googleDriveService = new GoogleDriveService(request.authToken);
-  const mrMeetFolder = await getMrMeetFolder(googleDriveService);
-  await chrome.storage.sync.set({ mrMeetFolderId: mrMeetFolder.id });
-  const classNames = await googleDriveService.getFolderFileNames(mrMeetFolder.id, 'folder');
-
-  await sendMessageToTab(request.tabId, {
-    message: 'showAttendanceModal',
-    classNames,
-    authToken: request.authToken,
-    meetingId: request.meetingId,
-    tabId: request.tabId,
-  });
-};
-
 const handleRandomSelect = async (request: RandomSelectRequest) => {
   const googleMeetService = new GoogleMeetService(request.authToken);
   const participantNames = await googleMeetService.listParticipantNamesByMeetingId(
@@ -158,10 +158,10 @@ const handleRandomSelect = async (request: RandomSelectRequest) => {
 
 const handleRuntimeMessage = async (request: RuntimeRequest) => {
   try {
-    if (request.message === 'takeAttendance') {
-      await handleTakeAttendance(request);
-    } else if (request.message === 'prepareAttendanceModal') {
+    if (request.message === 'prepareAttendanceModal') {
       await handlePrepareAttendanceModal(request);
+    } else if (request.message === 'takeAttendance') {
+      await handleTakeAttendance(request);
     } else if (request.message === 'randomSelect') {
       await handleRandomSelect(request);
     }
