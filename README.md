@@ -26,8 +26,16 @@
 ## Development
 
 1. Clone this repo
-2. Run `npm install`
-3. Run `npm run watch`
-4. Go to chrome extensions chrome://extensions
-5. Enable developer mode
-6. Click on load unpacked extension and select dist folder of this cloned repo
+2. Use Node 22: `nvm use 22`
+3. Install dependencies: `npm install`
+4. Start the development build: `npm run watch`
+5. Open Chrome extensions: `chrome://extensions`
+6. Enable Developer mode
+7. Click Load unpacked and select the `dist` folder from this repo
+8. After code changes, reload the extension in `chrome://extensions` and refresh the Google Meet tab
+
+For a one-off production build, run:
+
+```bash
+npm run build
+```
