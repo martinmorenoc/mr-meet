@@ -2,6 +2,30 @@ import React, { useEffect, useState, useCallback } from 'react';
 import ReactDOM from 'react-dom';
 import GoogleDriveService from './services/google-drive.service';
 
+type ActionId = 'attendance' | 'random';
+
+interface PopupAction {
+  id: ActionId;
+  label: string;
+  description: string;
+  icon: string;
+}
+
+const ACTIONS: PopupAction[] = [
+  {
+    id: 'attendance',
+    label: chrome.i18n.getMessage('attendanceButton'),
+    description: chrome.i18n.getMessage('attendanceButtonDescription'),
+    icon: 'A',
+  },
+  {
+    id: 'random',
+    label: chrome.i18n.getMessage('randomSelectButton'),
+    description: chrome.i18n.getMessage('randomSelectButtonDescription'),
+    icon: '?',
+  },
+];
+
 const getMeetingIdFromUrl = (url: string): string | null => {
   const meetRegex = /meet.google.com\/(\w{3}-\w{4}-\w{3})/;
   const match = url.match(meetRegex);
@@ -127,12 +151,15 @@ function Popup() {
 
 function Header() {
   return (
-    <>
-      <div>
-        <img src="../images/128.png" width="100" height="100" alt="logo" />
+    <header className="header">
+      <div className="brand">
+        <img className="brand__logo" src="../images/128.png" width="52" height="52" alt="logo" />
+        <div className="brand__copy">
+          <h1>{chrome.i18n.getMessage('titlePopup')}</h1>
+          <p>{chrome.i18n.getMessage('subtitlePopup')}</p>
+        </div>
       </div>
-      <h1>{chrome.i18n.getMessage('titlePopup')}</h1>
-    </>
+    </header>
   );
 }
 
@@ -143,29 +170,69 @@ interface ContentProps {
 }
 
 function Content({ isInMeeting, onTakeAttendance, onRandomSelect }: ContentProps) {
+  const handlers: Record<ActionId, () => void> = {
+    attendance: onTakeAttendance,
+    random: onRandomSelect,
+  };
+
   return (
-    <>
-      {!isInMeeting && <p>{chrome.i18n.getMessage('disabledDescriptionPopup')}</p>}
-      <button
-        disabled={!isInMeeting}
-        className="button-25"
-        type="button"
-        onClick={onTakeAttendance}
-      >
-        {chrome.i18n.getMessage('attendanceButton')}
-      </button>
-      <button disabled={!isInMeeting} className="button-25" type="button" onClick={onRandomSelect}>
-        {chrome.i18n.getMessage('randomSelectButton')}
-      </button>
-    </>
+    <main>
+      <MeetingStatus isInMeeting={isInMeeting} />
+      <div className="actions">
+        {ACTIONS.map((action) => (
+          <ActionButton
+            key={action.id}
+            action={action}
+            disabled={!isInMeeting}
+            onClick={handlers[action.id]}
+          />
+        ))}
+      </div>
+    </main>
+  );
+}
+
+interface MeetingStatusProps {
+  isInMeeting: boolean;
+}
+
+function MeetingStatus({ isInMeeting }: MeetingStatusProps) {
+  return (
+    <div className={isInMeeting ? 'status status--active' : 'status'}>
+      <span className="status__dot" />
+      <span>
+        {isInMeeting
+          ? chrome.i18n.getMessage('enabledDescriptionPopup')
+          : chrome.i18n.getMessage('disabledDescriptionPopup')}
+      </span>
+    </div>
+  );
+}
+
+interface ActionButtonProps {
+  action: PopupAction;
+  disabled: boolean;
+  onClick: () => void;
+}
+
+function ActionButton({ action, disabled, onClick }: ActionButtonProps) {
+  return (
+    <button disabled={disabled} className="action-button" type="button" onClick={onClick}>
+      <span className="action-button__icon" aria-hidden="true">
+        {action.icon}
+      </span>
+      <span className="action-button__content">
+        <span className="action-button__label">{action.label}</span>
+        <span className="action-button__description">{action.description}</span>
+      </span>
+    </button>
   );
 }
 
 function Footer() {
   return (
-    <>
-      <hr className="solid" />
-      <p>{chrome.i18n.getMessage('likeExtensionText')}</p>
+    <footer className="footer">
+      <span>{chrome.i18n.getMessage('likeExtensionText')}</span>
       <a
         href="https://chrome.google.com/webstore/detail/cipejegejindaigfnpffjkihnilkkflc"
         target="_blank"
@@ -173,7 +240,7 @@ function Footer() {
       >
         {chrome.i18n.getMessage('rateUsText')}
       </a>
-    </>
+    </footer>
   );
 }
 

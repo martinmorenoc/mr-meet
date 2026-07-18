@@ -1,61 +1,190 @@
-.container {
-  text-align: center;
-  width: 300px;
-  padding: 15px;
+:root {
+  color: #17212b;
+  font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
-a,p {
-  font-size: small;
+* {
+  box-sizing: border-box;
 }
 
-hr.solid {
-  border-top: 1px solid #bbb;
-  border-radius: 5px;
-}
-
-/* CSS */
-.button-25 {
-  background-color: #36A9AE;
-  background-image: linear-gradient(#37ADB2, #329CA0);
-  border: 1px solid #2A8387;
-  border-radius: 4px;
-  box-shadow: rgba(0, 0, 0, 0.12) 0 1px 1px;
-  color: #FFFFFF;
-  cursor: pointer;
-  font-family: -apple-system,".SFNSDisplay-Regular","Helvetica Neue",Helvetica,Arial,sans-serif;
-  font-size: 17px;
-  line-height: 100%;
+body {
   margin: 0;
-  outline: 0;
-  padding: 11px 15px 15px;
-  text-align: center;
-  transition: box-shadow .05s ease-in-out,opacity .05s ease-in-out;
-  user-select: none;
-  -webkit-user-select: none;
-  touch-action: manipulation;
-  width: 90%;
-  margin-block: 8px;
+  background: #f4f7f8;
 }
 
-.button-25:hover {
-  box-shadow: rgba(255, 255, 255, 0.3) 0 0 2px inset, rgba(0, 0, 0, 0.4) 0 1px 2px;
-  text-decoration: none;
-  transition-duration: .15s, .15s;
+.container {
+  width: 340px;
+  padding: 18px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(255, 255, 255, 0.88)),
+    #eef5f3;
 }
 
-.button-25:active {
-  box-shadow: rgba(0, 0, 0, 0.15) 0 2px 4px inset, rgba(0, 0, 0, 0.4) 0 1px 1px;
+.header {
+  margin-bottom: 16px;
 }
 
-.button-25:disabled {
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.brand__logo {
+  width: 52px;
+  height: 52px;
+  border-radius: 8px;
+  box-shadow: 0 6px 18px rgba(19, 76, 79, 0.16);
+}
+
+.brand__copy {
+  min-width: 0;
+  text-align: left;
+}
+
+.brand__copy h1 {
+  margin: 0;
+  color: #122024;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.15;
+}
+
+.brand__copy p {
+  margin: 4px 0 0;
+  color: #607077;
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 34px;
+  padding: 9px 11px;
+  border: 1px solid #d7e1e3;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #627178;
+  font-size: 12px;
+  font-weight: 600;
+  text-align: left;
+}
+
+.status--active {
+  border-color: #a9d8cc;
+  background: #eefaf6;
+  color: #176553;
+}
+
+.status__dot {
+  flex: 0 0 8px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #9aa8ad;
+}
+
+.status--active .status__dot {
+  background: #18a779;
+}
+
+.actions {
+  display: grid;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.action-button {
+  display: grid;
+  grid-template-columns: 40px 1fr;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 72px;
+  padding: 13px;
+  border: 1px solid #cfe0df;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #17212b;
+  cursor: pointer;
+  text-align: left;
+  transition:
+    border-color 120ms ease,
+    box-shadow 120ms ease,
+    transform 120ms ease;
+}
+
+.action-button:hover:not(:disabled) {
+  border-color: #33a6a0;
+  box-shadow: 0 10px 24px rgba(18, 72, 73, 0.14);
+  transform: translateY(-1px);
+}
+
+.action-button:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.action-button:focus-visible {
+  outline: 3px solid rgba(51, 166, 160, 0.26);
+  outline-offset: 2px;
+}
+
+.action-button:disabled {
   cursor: not-allowed;
-  opacity: .6;
+  opacity: 0.58;
 }
 
-.button-25:disabled:active {
-  pointer-events: none;
+.action-button__icon {
+  display: inline-grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  background: #e5f4f1;
+  color: #12665f;
+  font-size: 16px;
+  font-weight: 800;
 }
 
-.button-25:disabled:hover {
-  box-shadow: none;
+.action-button__content {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+.action-button__label {
+  color: #15262a;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.action-button__description {
+  color: #66767d;
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 15px;
+  padding-top: 13px;
+  border-top: 1px solid #dce5e7;
+  color: #6f7d83;
+  font-size: 12px;
+}
+
+.footer a {
+  color: #1b766e;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.footer a:hover {
+  text-decoration: underline;
 }

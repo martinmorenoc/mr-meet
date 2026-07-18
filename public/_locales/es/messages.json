@@ -14,6 +14,9 @@
     "attendanceButton": {
         "message": "Tomar Asistencia"
     },
+    "attendanceButtonDescription": {
+        "message": "Guarda los participantes actuales en Sheets."
+    },
     "attendanceTaken": {
         "message": "Asistencia tomada con éxito"
     },
@@ -25,6 +28,9 @@
     },
     "randomSelectButton": {
         "message": "Selección Aleatoria"
+    },
+    "randomSelectButtonDescription": {
+        "message": "Elige una persona de la reunión."
     },
     "somethingWentWrong": {
         "message": "Algo salió mal"
@@ -79,6 +85,9 @@
     },
     "disabledDescriptionPopup": {
         "message": "Las funciones se habilitan cuando estás en una reunión"
+    },
+    "enabledDescriptionPopup": {
+        "message": "Listo en esta reunión"
     },
     "titlePopup": {
         "message": "Funciones Mr Meet"
