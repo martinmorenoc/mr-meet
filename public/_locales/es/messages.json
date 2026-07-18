@@ -102,10 +102,16 @@
         "message": "Herramientas de asistencia para tus clases en Google Meet"
     },
     "likeExtensionText": {
-        "message": "¿Te gusta la extensión?"
+        "message": "¿Te gusta Mr Meet?"
     },
     "rateUsText": {
         "message": "Escribe una reseña!"
+    },
+    "buyMeACoffeeText": {
+        "message": "Apoya el proyecto"
+    },
+    "supportProjectTitle": {
+        "message": "Aporte opcional para apoyar el desarrollo"
     },
     "totalAttendance": {
         "message": "Asistencia Total"

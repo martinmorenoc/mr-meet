@@ -4,7 +4,7 @@
   "name": "__MSG_appName__",
   "description": "__MSG_appDesc__",
   "default_locale": "en",
-  "version": "1.0.3",
+  "version": "1.1.0",
   "oauth2": {
     "client_id": "426988588387-45t865hnqu44u4p25lba8ihpgjgm2jn2.apps.googleusercontent.com",
     "scopes": [
@@ -39,5 +39,10 @@
 
   "permissions": ["storage", "identity"],
 
-  "host_permissions": ["<all_urls>"]
+  "host_permissions": [
+    "https://meet.google.com/*",
+    "https://www.googleapis.com/*",
+    "https://sheets.googleapis.com/*",
+    "https://meet.googleapis.com/*"
+  ]
 }

@@ -102,10 +102,16 @@
         "message": "Reload the Google Meet tab and try again"
     },
     "likeExtensionText": {
-        "message": "Do you like the extension?"
+        "message": "Enjoying Mr Meet?"
     },
     "rateUsText": {
         "message": "Please rate us!"
+    },
+    "buyMeACoffeeText": {
+        "message": "Support the project"
+    },
+    "supportProjectTitle": {
+        "message": "Optional tip to support development"
     },
     "totalAttendance": {
         "message": "Total Attendance"
