@@ -1,108 +1,179 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import ReactDOM from 'react-dom';
-import createFolder from './services/createFolder';
-import getFileByName from './services/getFileByName';
-import getFolderFileNames from './services/getFolderFileNames';
+import GoogleDriveService from './services/google-drive.service';
+
+const getMeetingIdFromUrl = (url: string): string | null => {
+  const meetRegex = /meet.google.com\/(\w{3}-\w{4}-\w{3})/;
+  const match = url.match(meetRegex);
+  return match ? match[1] : null;
+};
+
+const getAuthToken = () =>
+  new Promise<string>((resolve, reject) => {
+    chrome.identity.getAuthToken({ interactive: true }, (authToken) => {
+      if (chrome.runtime.lastError) {
+        reject(new Error(chrome.runtime.lastError.message));
+        return;
+      }
+
+      if (!authToken) {
+        reject(new Error('No auth token returned'));
+        return;
+      }
+
+      resolve(authToken);
+    });
+  });
+
+const getActiveMeetTab = async () => {
+  const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
+  const currentTab = tabs[0];
+
+  if (!currentTab?.id || !currentTab.url) {
+    throw new Error('No active tab');
+  }
+
+  const meetingId = getMeetingIdFromUrl(currentTab.url);
+  if (!meetingId) {
+    throw new Error('Invalid meeting URL');
+  }
+
+  return {
+    meetingId,
+    tabId: currentTab.id,
+  };
+};
 
 function Popup() {
   const [isInMeeting, setIsInMeeting] = useState<boolean>(false);
-  useEffect(() => {
-    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-      if (tabs[0].url?.includes('meet.google.com/')) {
-        setIsInMeeting(true);
-      }
+
+  const getMrMeetFolder = async (googleDriveService: GoogleDriveService) => {
+    const folderName = chrome.i18n.getMessage('mrMeetFolderName');
+    const existingFolder = await googleDriveService.getFileByName(folderName, 'folder');
+    return existingFolder || googleDriveService.createFolder(folderName);
+  };
+
+  const initializeAttendanceProcess = async (
+    tabId: number,
+    authToken: string,
+    meetingId: string,
+  ) => {
+    const googleDriveService = new GoogleDriveService(authToken);
+
+    // Obtener o crear la carpeta principal
+    const mrMeetFolder = await getMrMeetFolder(googleDriveService);
+    await chrome.storage.sync.set({ mrMeetFolderId: mrMeetFolder.id });
+
+    // Obtener nombres de las clases
+    const classNames = await googleDriveService.getFolderFileNames(mrMeetFolder.id, 'folder');
+
+    // Enviar mensaje al content script
+    chrome.tabs.sendMessage(tabId, {
+      message: 'showAttendanceModal',
+      classNames,
+      authToken,
+      meetingId,
+      tabId,
     });
+  };
+
+  const checkIfInMeeting = useCallback(async () => {
+    const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
+    const currentTab = tabs[0];
+    setIsInMeeting(Boolean(currentTab.url?.includes('meet.google.com/')));
   }, []);
 
-  const takeAttendance = () => {
-    chrome.identity.getAuthToken({ interactive: true }, async (authToken: string) => {
-      chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-        const tab = tabs[0];
-        if (tab.id) {
-          chrome.tabs.sendMessage(
-            tab.id,
-            { message: 'isTabOpenAndHasParticipants' },
-            async ({ isTabOpenAndHasParticipants }) => {
-              if (tab.id && isTabOpenAndHasParticipants) {
-                const gettedFolder = await getFileByName(chrome.i18n.getMessage('mrMeetFolderName'), 'folder', authToken);
-                const mrMeetFolder = gettedFolder || await createFolder(chrome.i18n.getMessage('mrMeetFolderName'), authToken);
-                chrome.storage.sync.set({ mrMeetFolderId: mrMeetFolder.id });
-                const classNames = await getFolderFileNames(mrMeetFolder.id, 'folder', authToken);
-                chrome.tabs.sendMessage(
-                  tab.id,
-                  {
-                    message: 'showAttendanceModal',
-                    classNames,
-                    authToken,
-                  },
-                );
-              }
-            },
-          );
-        }
+  const handleTakeAttendance = useCallback(async () => {
+    try {
+      const authToken = await getAuthToken();
+      const { meetingId, tabId } = await getActiveMeetTab();
+      await initializeAttendanceProcess(tabId, authToken, meetingId);
+    } catch (error) {
+      console.error('Error taking attendance:', error);
+    }
+  }, []);
+
+  const handleRandomSelect = useCallback(async () => {
+    try {
+      const authToken = await getAuthToken();
+      const { meetingId, tabId } = await getActiveMeetTab();
+      chrome.runtime.sendMessage({
+        message: 'randomSelect',
+        authToken,
+        meetingId,
+        tabId,
       });
-    });
-  };
+    } catch (error) {
+      console.error('Error in random selection:', error);
+    }
+  }, []);
 
-  const randomSelect = () => {
-    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-      const tab = tabs[0];
-      if (tab.id) {
-        chrome.tabs.sendMessage(
-          tab.id,
-          { message: 'isTabOpenAndHasParticipants' },
-          ({ isTabOpenAndHasParticipants }) => {
-            if (tab.id && isTabOpenAndHasParticipants) {
-              chrome.tabs.sendMessage(
-                tab.id,
-                { message: 'showRandomSelectModal' },
-              );
-            }
-          },
-        );
-      }
-    });
-  };
+  useEffect(() => {
+    checkIfInMeeting();
+  }, []);
 
-  let description;
-  if (!isInMeeting) {
-    description = chrome.i18n.getMessage('disabledDescriptionPopup');
-  }
   return (
-    // eslint-disable-next-line react/jsx-filename-extension
     <div className="container">
+      <Header />
+      <Content
+        isInMeeting={isInMeeting}
+        onTakeAttendance={handleTakeAttendance}
+        onRandomSelect={handleRandomSelect}
+      />
+      <Footer />
+    </div>
+  );
+}
+
+function Header() {
+  return (
+    <>
       <div>
         <img src="../images/128.png" width="100" height="100" alt="logo" />
       </div>
       <h1>{chrome.i18n.getMessage('titlePopup')}</h1>
-      <p>{description}</p>
+    </>
+  );
+}
+
+interface ContentProps {
+  isInMeeting: boolean;
+  onTakeAttendance: () => void;
+  onRandomSelect: () => void;
+}
+
+function Content({ isInMeeting, onTakeAttendance, onRandomSelect }: ContentProps) {
+  return (
+    <>
+      {!isInMeeting && <p>{chrome.i18n.getMessage('disabledDescriptionPopup')}</p>}
       <button
         disabled={!isInMeeting}
         className="button-25"
         type="button"
-        onClick={takeAttendance}
+        onClick={onTakeAttendance}
       >
         {chrome.i18n.getMessage('attendanceButton')}
       </button>
-      <button
-        disabled={!isInMeeting}
-        className="button-25"
-        type="button"
-        onClick={randomSelect}
-      >
+      <button disabled={!isInMeeting} className="button-25" type="button" onClick={onRandomSelect}>
         {chrome.i18n.getMessage('randomSelectButton')}
       </button>
-      <br />
+    </>
+  );
+}
+
+function Footer() {
+  return (
+    <>
       <hr className="solid" />
       <p>{chrome.i18n.getMessage('likeExtensionText')}</p>
       <a
-        href="https://chrome.google.com/webstore/detail/mr-meet-take-attendance-i/cipejegejindaigfnpffjkihnilkkflc"
+        href="https://chrome.google.com/webstore/detail/cipejegejindaigfnpffjkihnilkkflc"
         target="_blank"
         rel="noreferrer"
       >
         {chrome.i18n.getMessage('rateUsText')}
       </a>
-    </div>
+    </>
   );
 }
 
