@@ -64,6 +64,18 @@ const sendToTab = async (tabId: number, message: Record<string, unknown>) => {
   }
 };
 
+const sendToBackground = (message: Record<string, unknown>) =>
+  new Promise<void>((resolve, reject) => {
+    chrome.runtime.sendMessage(message, () => {
+      if (chrome.runtime.lastError) {
+        reject(new Error(chrome.runtime.lastError.message));
+        return;
+      }
+
+      resolve();
+    });
+  });
+
 function Popup() {
   const [meetingContext, setMeetingContext] = useState<MeetingContext | null>(null);
   const [isCheckingMeeting, setIsCheckingMeeting] = useState(true);
@@ -110,7 +122,7 @@ function Popup() {
 
         const authToken = await getAuthToken();
 
-        chrome.runtime.sendMessage({
+        await sendToBackground({
           message: action === 'attendance' ? 'prepareAttendanceModal' : 'randomSelect',
           authToken,
           meetingId: meetingContext.meetingId,

@@ -38,9 +38,6 @@
     "noParticipants": {
         "message": "No hay participantes en la reunión."
     },
-    "openParticipantsTab": {
-        "message": "Asegurate de tener abierta la pestaña de participantes"
-    },
     "selectACourse": {
         "message": "Selecciona una clase"
     },
@@ -65,6 +62,9 @@
     "newCourseModalPlaceHolder": {
         "message": "Escribe el nombre de la clase aquí..."
     },
+    "newCourseModalAriaLabel": {
+        "message": "Nombre de la clase"
+    },
     "newCourseModalAlreadyExists": {
         "message": "Esta clase ya existe"
     },
@@ -76,12 +76,6 @@
     },
     "hasBeenSelected": {
         "message": " ha sido seleccionado"
-    },
-    "noCoursesAvailable":{
-        "message": "No tienes clases disponibles"
-    },
-    "noCoursesModalText":{
-        "message": "Crea uno tomando asistencia por primera vez"
     },
     "disabledDescriptionPopup": {
         "message": "Las funciones se habilitan cuando estás en una reunión"
