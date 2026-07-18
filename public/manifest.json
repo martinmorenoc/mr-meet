@@ -4,13 +4,14 @@
   "name": "__MSG_appName__",
   "description": "__MSG_appDesc__",
   "default_locale": "en",
-  "container": "GOOGLE_DRIVE",
-  "api_console_project_id": "426988588387",
   "version": "1.0.3",
-  "oauth2":{
-		"client_id":"426988588387-45t865hnqu44u4p25lba8ihpgjgm2jn2.apps.googleusercontent.com",
-		"scopes":["https://www.googleapis.com/auth/drive.file"]
-    },
+  "oauth2": {
+    "client_id": "426988588387-45t865hnqu44u4p25lba8ihpgjgm2jn2.apps.googleusercontent.com",
+    "scopes": [
+      "https://www.googleapis.com/auth/drive.file",
+      "https://www.googleapis.com/auth/meetings.space.readonly"
+    ]
+  },
   "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAq0AUTc5Wn6/leppHTs2vk79bxQ4rx/CUNv5YI79rp0OL9Qs9jzSPhLnPo4f9uCLuctA+lmTUplQikwNJ0+/zzJMvakM9LbVDiyW/+S5lLLYIYkoSYllifbVdK0/g14tUTDgNdcyjticgkcPo31U+q/ehyb5oQ8Fthim26GNA1gzrssGrL96e++Fim1TWh1Ff24BG5UzkfULV6B83bN6eIU7uEfUv3RGSbtYwQjbT005XCCIK5WHcql/NN95clhgixPJbnxHt+dFlS8M6A/HRBEdi1/JbFzY4ED0EgHpTPYk5tiTkZSc4Z+0ulS7y4A4MCbksbFdFrZdFnTDZRRlEZwIDAQAB",
 
   "action": {
@@ -19,10 +20,10 @@
   },
 
   "content_scripts": [
-      {
-          "matches": ["https://meet.google.com/*"],
-          "js": ["js/vendor.js", "js/content_script.js"]
-      }
+    {
+      "matches": ["https://meet.google.com/*"],
+      "js": ["js/vendor.js", "js/content_script.js"]
+    }
   ],
 
   "background": {
@@ -36,12 +37,7 @@
     "128": "images/128.png"
   },
 
-  "permissions": [
-    "storage",
-    "identity"
-  ],
+  "permissions": ["storage", "identity"],
 
-  "host_permissions": [
-    "<all_urls>"
-  ]
+  "host_permissions": ["<all_urls>"]
 }

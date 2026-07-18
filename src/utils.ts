@@ -1,14 +1,12 @@
 export function sortDictionaryByValue(obj: Record<string, string>) {
-  return Object.fromEntries(
-    Object.entries(obj).sort(([, a], [, b]) => a.localeCompare(b)),
-  );
+  return Object.fromEntries(Object.entries(obj).sort(([, a], [, b]) => a.localeCompare(b)));
 }
 
 function getDateTime() {
   return new Date().toLocaleString();
 }
 
-export function manageAttendanceSheetContent(content: string[][], names: string[]) {
+export function manageAttendanceSheetContent(content: string[][] | undefined, names: string[]) {
   if (content === undefined) {
     // eslint-disable-next-line no-param-reassign
     content = [['Name']].concat(Array.from(names, (name) => [name]));
