@@ -1,4 +1,13 @@
 import Swal from 'sweetalert2';
+import { REVIEW_URL } from './utils';
+
+const buildReviewFooter = () => {
+  const question = chrome.i18n.getMessage('likeExtensionText');
+  const linkText = chrome.i18n.getMessage('rateUsText');
+
+  // The footer is a flex container, so a plain trailing space would be trimmed away.
+  return `${question}&nbsp;<a href="${REVIEW_URL}" target="_blank" rel="noreferrer">${linkText}</a>`;
+};
 
 const showLoading = (title: string) =>
   Swal.fire({
@@ -123,6 +132,7 @@ chrome.runtime.onMessage.addListener(async (msg, sender, sendResponse) => {
       icon: 'success',
       showCancelButton: true,
       confirmButtonText: chrome.i18n.getMessage('open'),
+      footer: msg.askForReview ? buildReviewFooter() : undefined,
     }).then((result) => {
       if (result.isConfirmed) {
         window.open(`https://docs.google.com/spreadsheets/d/${msg.spreadsheetId}`, '_blank');

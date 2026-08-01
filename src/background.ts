@@ -29,6 +29,26 @@ interface PrepareAttendanceModalRequest extends BaseRequest {
 
 type RuntimeRequest = TakeAttendanceRequest | RandomSelectRequest | PrepareAttendanceModalRequest;
 
+// Only ask for a review once the user has felt the value of the extension.
+const REVIEW_PROMPT_THRESHOLD = 3;
+
+const registerAttendanceAndCheckReviewPrompt = async () => {
+  const { attendanceCount = 0, reviewPromptShown = false } = await chrome.storage.sync.get([
+    'attendanceCount',
+    'reviewPromptShown',
+  ]);
+  const nextAttendanceCount = attendanceCount + 1;
+
+  await chrome.storage.sync.set({ attendanceCount: nextAttendanceCount });
+
+  if (reviewPromptShown || nextAttendanceCount < REVIEW_PROMPT_THRESHOLD) {
+    return false;
+  }
+
+  await chrome.storage.sync.set({ reviewPromptShown: true });
+  return true;
+};
+
 const sendMessageToTab = async (tabId: number | undefined, message: Record<string, unknown>) => {
   if (tabId) {
     await chrome.tabs.sendMessage(tabId, message);
@@ -138,9 +158,12 @@ const handleTakeAttendance = async (request: TakeAttendanceRequest) => {
     spreadsheetId,
     sheetContent,
   );
+  const askForReview = await registerAttendanceAndCheckReviewPrompt();
+
   await sendMessageToTab(request.tabId, {
     message: 'success',
     spreadsheetId,
+    askForReview,
   });
 };
 

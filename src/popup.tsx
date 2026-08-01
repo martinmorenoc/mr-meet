@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import ReactDOM from 'react-dom';
-import { getMeetingIdFromUrl } from './utils';
+import { getMeetingIdFromUrl, REVIEW_URL } from './utils';
 
 type ActionId = 'attendance' | 'random';
 type ActionState = 'idle' | ActionId;
@@ -308,11 +308,7 @@ function Footer() {
     <footer className="footer">
       <p className="footer__text">
         {chrome.i18n.getMessage('likeExtensionText')}{' '}
-        <a
-          href="https://chrome.google.com/webstore/detail/cipejegejindaigfnpffjkihnilkkflc"
-          target="_blank"
-          rel="noreferrer"
-        >
+        <a href={REVIEW_URL} target="_blank" rel="noreferrer">
           {chrome.i18n.getMessage('rateUsText')}
         </a>
         {' · '}
