@@ -19,7 +19,7 @@
   "dependencies": {
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
-    "sweetalert2": "^11.4.0"
+    "sweetalert2": "^11.26.25"
   },
   "devDependencies": {
     "@types/chrome": "0.0.158",
