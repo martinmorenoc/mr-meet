@@ -1,0 +1,56 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Mr Meet</title>
+    <link rel="stylesheet" type="text/css" href="welcome.css"/>
+  </head>
+  <body>
+    <main class="page">
+      <header class="hero">
+        <img class="hero__logo" src="images/128.png" width="72" height="72" alt="Mr Meet">
+        <h1 class="hero__title" data-i18n="welcomeTitle"></h1>
+        <p class="hero__subtitle" data-i18n="welcomeSubtitle"></p>
+      </header>
+
+      <section class="card">
+        <h2 class="card__title" data-i18n="welcomeStepsTitle"></h2>
+        <ol class="steps">
+          <li class="step">
+            <span class="step__number">1</span>
+            <p class="step__text" data-i18n="welcomeStep1"></p>
+          </li>
+          <li class="step">
+            <span class="step__number">2</span>
+            <p class="step__text" data-i18n="welcomeStep2"></p>
+          </li>
+          <li class="step">
+            <span class="step__number">3</span>
+            <p class="step__text" data-i18n="welcomeStep3"></p>
+          </li>
+        </ol>
+      </section>
+
+      <div class="cards">
+        <section class="card">
+          <h2 class="card__title" data-i18n="welcomeRandomTitle"></h2>
+          <p class="card__text" data-i18n="welcomeRandomText"></p>
+        </section>
+        <section class="card">
+          <h2 class="card__title" data-i18n="welcomeFilesTitle"></h2>
+          <p class="card__text" data-i18n="welcomeFilesText"></p>
+        </section>
+      </div>
+
+      <a class="cta" href="https://meet.google.com/" data-i18n="welcomeCta"></a>
+
+      <footer class="footer">
+        <p class="footer__text">
+          <span data-i18n="likeExtensionText"></span>
+          <a id="review-link" href="#" target="_blank" rel="noreferrer" data-i18n="rateUsText"></a>
+        </p>
+      </footer>
+    </main>
+    <script src="welcome.js"></script>
+  </body>
+</html>

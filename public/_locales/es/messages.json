@@ -92,9 +92,6 @@
     "loadingRandomSelect": {
         "message": "Cargando participantes..."
     },
-    "meetingNotReady": {
-        "message": "Google Meet todavía no registra esta reunión. Espera unos segundos e inténtalo de nuevo."
-    },
     "contentScriptUnavailable": {
         "message": "Recarga la pestaña de Google Meet e inténtalo de nuevo"
     },
@@ -121,6 +118,50 @@
     },
     "closeButton": {
         "message": "Cerrar"
+    },
+    "meetingNotReady": {
+        "message": "Google Meet todavía no registra esta reunión. Espera unos segundos e inténtalo de nuevo."
+    },
+    "participantsRecorded": {
+        "message": "$count$ participantes registrados.",
+        "placeholders": {
+            "count": {
+                "content": "$1"
+            }
+        }
+    },
+    "welcomeTitle": {
+        "message": "Mr Meet está listo"
+    },
+    "welcomeSubtitle": {
+        "message": "Asistencia para tus clases en Google Meet, guardada directo en tus propias planillas de Google Sheets."
+    },
+    "welcomeStepsTitle": {
+        "message": "Cómo pasar lista"
+    },
+    "welcomeStep1": {
+        "message": "Entra a tu clase en Google Meet y espera a que lleguen tus alumnos."
+    },
+    "welcomeStep2": {
+        "message": "Haz clic en el ícono de Mr Meet en la barra de Chrome. Si lo fijas, queda siempre a un clic."
+    },
+    "welcomeStep3": {
+        "message": "Elige Tomar Asistencia y selecciona la clase o crea una nueva. Se registra a todos los presentes con la fecha y la hora."
+    },
+    "welcomeRandomTitle": {
+        "message": "Selección Aleatoria"
+    },
+    "welcomeRandomText": {
+        "message": "Elige al azar a un participante de la reunión. Útil para preguntas, turnos y para mantener despierta a la clase."
+    },
+    "welcomeFilesTitle": {
+        "message": "Dónde quedan tus datos"
+    },
+    "welcomeFilesText": {
+        "message": "Mr Meet crea una carpeta llamada Mr Meet en tu Google Drive, con una planilla por clase. La pestaña Details guarda una columna por sesión y la pestaña Summary hace los totales. Son tus archivos, en tu cuenta: no se envía nada a ninguna otra parte."
+    },
+    "welcomeCta": {
+        "message": "Abrir Google Meet"
     },
     "titlePopup": {
         "message": "Funciones Mr Meet"

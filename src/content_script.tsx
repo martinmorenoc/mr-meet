@@ -207,9 +207,13 @@ chrome.runtime.onMessage.addListener(async (msg, sender, sendResponse) => {
     Swal.close();
     randomSelect(msg.participantNames);
   } else if (message === 'success') {
+    const recorded = chrome.i18n.getMessage('participantsRecorded', [
+      String(msg.participantCount),
+    ]);
+
     Swal.fire({
       title: chrome.i18n.getMessage('attendanceTaken'),
-      text: chrome.i18n.getMessage('openMessage'),
+      text: `${recorded} ${chrome.i18n.getMessage('openMessage')}`,
       icon: 'success',
       showCancelButton: true,
       confirmButtonText: chrome.i18n.getMessage('open'),

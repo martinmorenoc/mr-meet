@@ -98,9 +98,6 @@
     "loadingRandomSelect": {
         "message": "Loading participants..."
     },
-    "meetingNotReady": {
-        "message": "The meeting has not been registered by Google Meet yet. Wait a few seconds and try again."
-    },
     "contentScriptUnavailable": {
         "message": "Reload the Google Meet tab and try again"
     },
@@ -127,6 +124,50 @@
     },
     "closeButton": {
         "message": "Close"
+    },
+    "meetingNotReady": {
+        "message": "The meeting has not been registered by Google Meet yet. Wait a few seconds and try again."
+    },
+    "participantsRecorded": {
+        "message": "$count$ participants recorded.",
+        "placeholders": {
+            "count": {
+                "content": "$1"
+            }
+        }
+    },
+    "welcomeTitle": {
+        "message": "Mr Meet is ready"
+    },
+    "welcomeSubtitle": {
+        "message": "Attendance for your Google Meet classes, saved straight to your own Google Sheets."
+    },
+    "welcomeStepsTitle": {
+        "message": "Taking attendance"
+    },
+    "welcomeStep1": {
+        "message": "Join your class on Google Meet and wait for your students to arrive."
+    },
+    "welcomeStep2": {
+        "message": "Click the Mr Meet icon in your Chrome toolbar. Pin it and it will always be one click away."
+    },
+    "welcomeStep3": {
+        "message": "Choose Take Attendance, then pick the class or create a new one. Everyone in the meeting is recorded with the date and time."
+    },
+    "welcomeRandomTitle": {
+        "message": "Random Select"
+    },
+    "welcomeRandomText": {
+        "message": "Picks one participant at random from the meeting. Handy for questions, turns, and keeping a class awake."
+    },
+    "welcomeFilesTitle": {
+        "message": "Where your data lives"
+    },
+    "welcomeFilesText": {
+        "message": "Mr Meet creates a folder called Mr Meet in your Google Drive, with one spreadsheet per class. The Details tab holds one column per session, and the Summary tab totals it up. They are your files, in your account: nothing is sent anywhere else."
+    },
+    "welcomeCta": {
+        "message": "Open Google Meet"
     },
     "likeExtensionText": {
         "message": "Enjoying Mr Meet?"

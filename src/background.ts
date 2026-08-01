@@ -223,6 +223,7 @@ const handleTakeAttendance = async (request: TakeAttendanceRequest) => {
     message: 'success',
     spreadsheetId,
     askForReview,
+    participantCount: participants.value.length,
   });
 };
 
@@ -262,6 +263,14 @@ const handleRuntimeMessage = async (request: RuntimeRequest) => {
     stopKeepAlive();
   }
 };
+
+chrome.runtime.onInstalled.addListener((details) => {
+  // Only on a fresh install: the Drive permission is the scary part of setup,
+  // and an update is not the moment to explain it again.
+  if (details.reason === 'install') {
+    chrome.tabs.create({ url: chrome.runtime.getURL('welcome.html') });
+  }
+});
 
 chrome.runtime.onMessage.addListener((request: RuntimeRequest, _sender, sendResponse) => {
   void handleRuntimeMessage(request);
