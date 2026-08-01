@@ -1,9 +1,9 @@
 {
     "appName": {
-      "message": "Mr Meet - Take Attendance in Google Meet"
+      "message": "Attendance for Google Meet™ – Mr Meet"
     },
     "appDesc": {
-      "message": "Adds new class-oriented functionality to Google Meet. Take attendance and select a random student."
+      "message": "Take attendance in Google Meet with one click: save the participant list to Google Sheets and pick a random student. For teachers."
     },
     "mrMeetFolderName": {
         "message": "Mr Meet"

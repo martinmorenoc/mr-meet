@@ -1,9 +1,9 @@
 {
     "appName": {
-      "message": "Mr Meet - Toma Asistencia en Google Meet"
+      "message": "Asistencia para Google Meet™ – Pasar lista"
     },
     "appDesc": {
-      "message": "Agrega nuevas funcionalidades a Google Meet orientadas a las clases. Tomar asistencia y selección aleatoria de un alumno."
+      "message": "Pasa lista en Google Meet en 1 clic: guarda la lista de asistencia en Google Sheets y elige un alumno al azar. Para profesores."
     },
     "mrMeetFolderName": {
         "message": "Mr Meet"
@@ -105,7 +105,7 @@
         "message": "¿Te gusta Mr Meet?"
     },
     "rateUsText": {
-        "message": "Escribe una reseña!"
+        "message": "¡Escribe una reseña!"
     },
     "buyMeACoffeeText": {
         "message": "Apoya el proyecto"
