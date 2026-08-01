@@ -13,6 +13,11 @@ interface getFileByNameResponse {
 
 const escapeDriveQueryValue = (value: string) => value.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
 
+// Drive keeps returning trashed files unless asked not to. Without this, a
+// folder the teacher deleted stays in use and their attendance keeps landing in
+// the trash.
+const NOT_TRASHED = 'trashed = false';
+
 export class GoogleDriveService {
   private api: GoogleApiClient;
 
@@ -41,7 +46,7 @@ export class GoogleDriveService {
         params: {
           q: `name='${escapeDriveQueryValue(
             fileName,
-          )}' and mimeType='application/vnd.google-apps.${type}'`,
+          )}' and mimeType='application/vnd.google-apps.${type}' and ${NOT_TRASHED}`,
         },
       });
 
@@ -58,7 +63,7 @@ export class GoogleDriveService {
     try {
       const data = await this.api.request<{ files: File[] }>('', {
         params: {
-          q: `mimeType='application/vnd.google-apps.${type}' and parents in '${folderId}'`,
+          q: `mimeType='application/vnd.google-apps.${type}' and parents in '${folderId}' and ${NOT_TRASHED}`,
         },
       });
       const fileNames: { [id: string]: string } = {};

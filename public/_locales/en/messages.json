@@ -98,6 +98,9 @@
     "loadingRandomSelect": {
         "message": "Loading participants..."
     },
+    "meetingNotReady": {
+        "message": "The meeting has not been registered by Google Meet yet. Wait a few seconds and try again."
+    },
     "contentScriptUnavailable": {
         "message": "Reload the Google Meet tab and try again"
     },

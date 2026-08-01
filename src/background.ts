@@ -136,6 +136,7 @@ const getOrCreateSpreadsheetId = async (
     classFolderId,
   );
 
+  await googleSheetsService.setSpreadsheetLocale(spreadsheet.id);
   await googleSheetsService.addSheet('Details', spreadsheet.id);
   await googleSheetsService.addSheet('Summary', spreadsheet.id);
   await googleSheetsService.addSummaryFormulasToSheet(spreadsheet.id);

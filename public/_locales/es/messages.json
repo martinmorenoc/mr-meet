@@ -92,6 +92,9 @@
     "loadingRandomSelect": {
         "message": "Cargando participantes..."
     },
+    "meetingNotReady": {
+        "message": "Google Meet todavía no registra esta reunión. Espera unos segundos e inténtalo de nuevo."
+    },
     "contentScriptUnavailable": {
         "message": "Recarga la pestaña de Google Meet e inténtalo de nuevo"
     },
