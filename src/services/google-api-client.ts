@@ -8,6 +8,11 @@ interface RequestOptions {
 
 const REQUEST_TIMEOUT_MS = 15000;
 const MAX_ATTEMPTS = 3;
+
+// A rate limit fails instantly, so three tries are cheap. A timeout costs the
+// full 15s, and a request Google never answers is unlikely to be answered on
+// the third ask either, so it gets one retry rather than two.
+const MAX_TIMEOUT_ATTEMPTS = 2;
 const RETRY_BASE_DELAY_MS = 500;
 
 // Rate limits and backend hiccups are routine on the Google APIs and recover on
@@ -44,11 +49,12 @@ export default class GoogleApiClient {
     } catch (error) {
       // A hung request never resolves on its own, so an aborted attempt has to
       // surface as a real failure instead of leaving the caller waiting.
-      const message = controller.signal.aborted
+      const timedOut = controller.signal.aborted;
+      const message = timedOut
         ? chrome.i18n.getMessage('requestTimeout')
         : (error as Error).message;
 
-      throw new RetryableRequestError(message);
+      throw new RetryableRequestError(message, timedOut);
     } finally {
       clearTimeout(timeoutId);
     }
@@ -77,6 +83,7 @@ export default class GoogleApiClient {
     });
 
     let lastError = new Error(chrome.i18n.getMessage('somethingWentWrong'));
+    let timeouts = 0;
 
     for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt += 1) {
       if (attempt > 0) {
@@ -93,6 +100,14 @@ export default class GoogleApiClient {
         }
 
         lastError = error;
+
+        if (error.timedOut) {
+          timeouts += 1;
+
+          if (timeouts >= MAX_TIMEOUT_ATTEMPTS) {
+            throw error;
+          }
+        }
       }
     }
 

@@ -55,8 +55,19 @@ const registerAttendanceAndCheckReviewPrompt = async () => {
 // result that is never coming. Touching an extension API resets that timer.
 const KEEP_ALIVE_INTERVAL_MS = 20000;
 
+// Holding the worker up is deliberate, so it needs a hard end. Without one, work
+// that never finishes would keep the worker unkillable, and reloading the
+// extension hangs waiting for it to stop.
+const KEEP_ALIVE_MAX_MS = 120000;
+
 const startKeepAlive = () => {
+  const startedAt = Date.now();
   const intervalId = setInterval(() => {
+    if (Date.now() - startedAt > KEEP_ALIVE_MAX_MS) {
+      clearInterval(intervalId);
+      return;
+    }
+
     chrome.runtime.getPlatformInfo(() => {});
   }, KEEP_ALIVE_INTERVAL_MS);
 
