@@ -101,6 +101,30 @@
     "contentScriptUnavailable": {
         "message": "Reload the Google Meet tab and try again"
     },
+    "loadingSearchingClasses": {
+        "message": "Looking for your classes..."
+    },
+    "loadingPreparingSpreadsheet": {
+        "message": "Preparing the spreadsheet and reading participants..."
+    },
+    "loadingSavingAttendance": {
+        "message": "Saving attendance to Sheets..."
+    },
+    "requestTimeout": {
+        "message": "Google took too long to respond"
+    },
+    "stalledTitle": {
+        "message": "This is taking longer than usual"
+    },
+    "stalledText": {
+        "message": "Google is responding slowly. You can keep waiting, or close this and try again."
+    },
+    "keepWaitingButton": {
+        "message": "Keep waiting"
+    },
+    "closeButton": {
+        "message": "Close"
+    },
     "likeExtensionText": {
         "message": "Enjoying Mr Meet?"
     },

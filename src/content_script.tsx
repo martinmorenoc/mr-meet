@@ -9,8 +9,35 @@ const buildReviewFooter = () => {
   return `${question}&nbsp;<a href="${REVIEW_URL}" target="_blank" rel="noreferrer">${linkText}</a>`;
 };
 
-const showLoading = (title: string) =>
-  Swal.fire({
+// Last line of defence: however the work dies upstream, the user gets a way out
+// instead of a spinner that never stops.
+const WATCHDOG_DELAY_MS = 20000;
+
+let watchdogTimeoutId: number | undefined;
+let currentLoadingTitle = '';
+let loadingState: 'idle' | 'loading' | 'stalled' = 'idle';
+
+const clearWatchdog = () => {
+  loadingState = 'idle';
+
+  if (watchdogTimeoutId !== undefined) {
+    window.clearTimeout(watchdogTimeoutId);
+    watchdogTimeoutId = undefined;
+  }
+};
+
+const restartWatchdog = (title: string) => {
+  currentLoadingTitle = title;
+  clearWatchdog();
+  loadingState = 'loading';
+  // eslint-disable-next-line no-use-before-define
+  watchdogTimeoutId = window.setTimeout(showStalledWarning, WATCHDOG_DELAY_MS);
+};
+
+const showLoading = (title: string) => {
+  restartWatchdog(title);
+
+  return Swal.fire({
     allowEscapeKey: false,
     allowOutsideClick: false,
     title,
@@ -18,6 +45,51 @@ const showLoading = (title: string) =>
       Swal.showLoading();
     },
   });
+};
+
+async function showStalledWarning() {
+  watchdogTimeoutId = undefined;
+  loadingState = 'stalled';
+
+  const result = await Swal.fire({
+    icon: 'warning',
+    title: chrome.i18n.getMessage('stalledTitle'),
+    text: chrome.i18n.getMessage('stalledText'),
+    showCancelButton: true,
+    confirmButtonText: chrome.i18n.getMessage('keepWaitingButton'),
+    cancelButtonText: chrome.i18n.getMessage('closeButton'),
+  });
+
+  // A late result may have replaced the warning while it was on screen, in
+  // which case the wait is already over and there is nothing to resume.
+  if (loadingState !== 'stalled') {
+    return;
+  }
+
+  if (result.isConfirmed) {
+    showLoading(currentLoadingTitle);
+  } else {
+    loadingState = 'idle';
+  }
+}
+
+// Swal.update() would rebuild the popup and drop the spinner, so the title node
+// is edited in place.
+const updateLoadingTitle = (title: string) => {
+  // Progress can arrive after the user closed the spinner, or while the stall
+  // warning is waiting on them. Neither is a moment to rearm or repaint.
+  if (loadingState !== 'loading') {
+    currentLoadingTitle = title;
+    return;
+  }
+
+  restartWatchdog(title);
+
+  const titleElement = Swal.getTitle();
+  if (titleElement) {
+    titleElement.textContent = title;
+  }
+};
 
 const takeAttendance = (
   className: string,
@@ -57,8 +129,17 @@ const randomSelect = (participantNames: string[]) => {
 
 chrome.runtime.onMessage.addListener(async (msg, sender, sendResponse) => {
   const { message } = msg;
+
+  // showLoading and updateLoading rearm the watchdog themselves; every other
+  // message means the wait is over, one way or another.
+  if (message !== 'showLoading' && message !== 'updateLoading') {
+    clearWatchdog();
+  }
+
   if (message === 'showLoading') {
     showLoading(msg.title);
+  } else if (message === 'updateLoading') {
+    updateLoadingTitle(msg.title);
   } else if (message === 'hideLoading') {
     Swal.close();
   } else if (message === 'showAttendanceModal') {

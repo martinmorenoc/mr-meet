@@ -95,6 +95,30 @@
     "contentScriptUnavailable": {
         "message": "Recarga la pestaña de Google Meet e inténtalo de nuevo"
     },
+    "loadingSearchingClasses": {
+        "message": "Buscando tus clases..."
+    },
+    "loadingPreparingSpreadsheet": {
+        "message": "Preparando la planilla y leyendo participantes..."
+    },
+    "loadingSavingAttendance": {
+        "message": "Guardando la asistencia en Sheets..."
+    },
+    "requestTimeout": {
+        "message": "Google tardó demasiado en responder"
+    },
+    "stalledTitle": {
+        "message": "Esto está tardando más de lo normal"
+    },
+    "stalledText": {
+        "message": "Google está respondiendo lento. Puedes seguir esperando, o cerrar e intentar de nuevo."
+    },
+    "keepWaitingButton": {
+        "message": "Seguir esperando"
+    },
+    "closeButton": {
+        "message": "Cerrar"
+    },
     "titlePopup": {
         "message": "Funciones Mr Meet"
     },
