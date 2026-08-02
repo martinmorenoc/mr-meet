@@ -9,7 +9,7 @@
 
 ## Screenshots
 ### Popup
-<img width="500" alt="popup" src="https://user-images.githubusercontent.com/43624675/156106369-90447a67-b483-41bd-b2b4-b85dfd7002ee.png">
+<img width="400" alt="popup" src="https://github.com/user-attachments/assets/d4fa5559-fa92-4b41-a7ba-e290f5d5114d">
 
 ### Attendance
 <img width="600" alt="attendanceModal" src="https://user-images.githubusercontent.com/43624675/156102208-6c65cfa3-027e-43ec-81a3-70cf90dab3e7.png">
