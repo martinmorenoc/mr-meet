@@ -36,7 +36,15 @@ module.exports = {
   },
   plugins: [
     new CopyPlugin({
-      patterns: [{ from: '.', to: '../', context: 'public' }],
+      patterns: [
+        {
+          from: '.',
+          to: '../',
+          context: 'public',
+          // Otherwise macOS metadata ships inside the published extension.
+          globOptions: { ignore: ['**/.DS_Store'] },
+        },
+      ],
       options: {},
     }),
   ],
