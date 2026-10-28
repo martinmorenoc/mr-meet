@@ -3,7 +3,9 @@ const EXTENSION_ID = 'cipejegejindaigfnpffjkihnilkkflc';
 export const REVIEW_URL = `https://chromewebstore.google.com/detail/${EXTENSION_ID}/reviews`;
 
 export const getMeetingIdFromUrl = (url: string): string | null => {
-  const meetRegex = /meet.google.com\/(\w{3}-\w{4}-\w{3})/;
+  // The code may follow path prefixes such as /meet/, /_meet/ or /u/1/.
+  const meetRegex =
+    /^https:\/\/meet\.google\.com\/(?:[\w-]+\/)*?([a-z]{3}-[a-z]{4}-[a-z]{3})(?:[/?#]|$)/i;
   const match = url.match(meetRegex);
   return match ? match[1] : null;
 };
